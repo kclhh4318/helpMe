@@ -17,6 +17,20 @@ class AuthCodeHandlerActivity : AppCompatActivity() {
             Log.e(TAG, "로그인 실패 $error")
         } else if (token != null) {
             Log.e(TAG, "로그인 성공 ${token.accessToken}")
+            // 사용자 정보 요청
+            UserApiClient.instance.me { user, error ->
+                if (error != null) {
+                    Log.e(TAG, "사용자 정보 요청 실패 $error")
+                } else if (user != null) {
+                    Log.e(TAG, "사용자 정보 요청 성공: ${user.kakaoAccount?.profile?.nickname}")
+
+                    // 사용자 정보 전달
+                    val intent = Intent(this, MyStudyActivity::class.java)
+                    intent.putExtra("nickname", user.kakaoAccount?.profile?.nickname)
+                    intent.putExtra("email", user.kakaoAccount?.email)
+                    startActivity(intent)
+                }
+            }
         }
     }
 
@@ -41,8 +55,7 @@ class AuthCodeHandlerActivity : AppCompatActivity() {
                         UserApiClient.instance.loginWithKakaoAccount(
                             this,
                             callback = mCallback
-
-                        )// 카카오 이메일 로그인
+                        ) // 카카오 이메일 로그인
                     }
                 }
                 // 로그인 성공 부분
@@ -68,6 +81,5 @@ class AuthCodeHandlerActivity : AppCompatActivity() {
             Log.d(TAG, "카카오톡 설치되지 않음, 카카오 이메일 로그인 시도")
             UserApiClient.instance.loginWithKakaoAccount(this, callback = mCallback) // 카카오 이메일 로그인
         }
-
     }
 }
