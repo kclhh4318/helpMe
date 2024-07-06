@@ -9,6 +9,12 @@ import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import android.content.Intent
+import com.example.helpme.network.ApiService
+import com.example.helpme.network.RetrofitClient
+import com.example.helpme.network.User
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class AuthCodeHandlerActivity : AppCompatActivity() {
 
@@ -81,5 +87,23 @@ class AuthCodeHandlerActivity : AppCompatActivity() {
             Log.d(TAG, "카카오톡 설치되지 않음, 카카오 이메일 로그인 시도")
             UserApiClient.instance.loginWithKakaoAccount(this, callback = mCallback) // 카카오 이메일 로그인
         }
+    }
+
+    private fun saveUserToServer(email: String, nickname: String) {
+        val apiService = RetrofitClient.instance.create(ApiService::class.java)
+        val user = User(email, nickname)
+        apiService.saveUser(user).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Log.d(TAG, "사용자 정보 저장 성공")
+                } else {
+                    Log.e(TAG, "사용자 정보 저장 실패: ${response.errorBody()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e(TAG, "사용자 정보 저장 실패: $t")
+            }
+        })
     }
 }
