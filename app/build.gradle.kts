@@ -87,6 +87,7 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.3.6")
     implementation("androidx.viewpager2:viewpager2:1.0.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation ("com.google.code.gson:gson:2.8.6")
     kapt("com.github.bumptech.glide:compiler:4.16.0") // kapt로 변경
 
     kapt("androidx.room:room-compiler:2.6.1")

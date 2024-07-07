@@ -21,27 +21,32 @@
                 android:id="@+id/button_lang_python"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Python" />
+                android:text="Python"
+                android:textStyle="normal"/>
             <Button
                 android:id="@+id/button_lang_java"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Java" />
+                android:text="Java"
+                android:textStyle="normal"/>
             <Button
                 android:id="@+id/button_lang_kotlin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Kotlin" />
+                android:text="Kotlin"
+                android:textStyle="normal"/>
             <Button
                 android:id="@+id/button_lang_cpp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="C++" />
+                android:text="C++"
+                android:textStyle="normal"/>
             <Button
                 android:id="@+id/button_lang_js"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="JavaScript" />
+                android:text="JavaScript"
+                android:textStyle="normal"/>
         </LinearLayout>
     </HorizontalScrollView>
 
@@ -60,27 +65,32 @@
                 android:id="@+id/button_type_ml"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Machine Learning" />
+                android:text="Machine Learning"
+                android:textStyle="normal"/>
             <Button
                 android:id="@+id/button_type_web"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Web Development" />
+                android:text="Web Development"
+                android:textStyle="normal"/>
             <Button
                 android:id="@+id/button_type_mobile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Mobile Development" />
+                android:text="Mobile Development"
+                android:textStyle="normal"/>
             <Button
                 android:id="@+id/button_type_blockchain"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Blockchain" />
+                android:text="Blockchain"
+                android:textStyle="normal"/>
             <Button
                 android:id="@+id/button_type_game"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Game Development" />
+                android:text="Game Development"
+                android:textStyle="normal"/>
         </LinearLayout>
     </HorizontalScrollView>
 

@@ -1,18 +1,26 @@
-{
-  "projects": [
-    {
-      "title": "Machine Learning with Python",
-      "startDate": "2023-01-15",
-      "endDate": null,
-      "language": "Python",
-      "type": "Machine Learning"
-    },
-    {
-      "title": "Blockchain Development",
-      "startDate": "2023-03-01",
-      "endDate": "2023-06-30",
-      "language": "Solidity",
-      "type": "Blockchain"
-    }
-  ]
-}
+[
+  {
+    "title": "Project 1",
+    "startDate": "2023-01-01",
+    "endDate": "2023-06-01",
+    "language": "Python",
+    "type": "Machine Learning",
+    "contents": "Contents 1",
+    "isLiked": false,
+    "remember": "",
+    "reference": "",
+    "likes": 5
+  },
+  {
+    "title": "Project 2",
+    "startDate": "2023-02-01",
+    "endDate": null,
+    "language": "Java",
+    "type": "blockchain",
+    "contents": "Contents 2",
+    "isLiked": false,
+    "remember": "",
+    "reference": "",
+    "likes": 3
+  }
+]

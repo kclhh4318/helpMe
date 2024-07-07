@@ -1,5 +1,6 @@
 package com.example.helpme
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,6 +38,8 @@ class ProjectsAdapter2(
         holder.languageTextView.text = project.language
         holder.typeTextView.text = project.type
         holder.likesTextView.text = project.likes.toString()
+
+        holder.likeImageView.setImageResource(if (project.isLiked) R.drawable.ic_heart_on else R.drawable.ic_heart_off)
 
         holder.likeImageView.setOnClickListener {
             project.isLiked = !project.isLiked

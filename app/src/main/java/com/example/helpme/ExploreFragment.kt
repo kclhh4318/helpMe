@@ -1,5 +1,6 @@
 package com.example.helpme
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,10 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.io.IOException
+import java.nio.charset.StandardCharsets
 
 class ExploreFragment : Fragment() {
 
@@ -16,6 +21,8 @@ class ExploreFragment : Fragment() {
 
     private val languages = arrayOf("Python", "Java", "Kotlin", "C++", "JavaScript")
     private val types = arrayOf("Machine Learning", "Web Development", "Mobile Development", "Blockchain", "Game Development")
+    private var selectedLanguage: String? = null
+    private var selectedType: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,7 +37,12 @@ class ExploreFragment : Fragment() {
         val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view_projects)
         recyclerView.layoutManager = LinearLayoutManager(context)
         adapter = ProjectsAdapter2(projects) { project ->
-            // 프로젝트 아이템 클릭 이벤트 처리
+            project?.let {
+                val intent = Intent(activity, ProjectDetailActivity::class.java).apply {
+                    putExtra("project", it)
+                }
+                startActivity(intent)
+            }
         }
         recyclerView.adapter = adapter
 
@@ -59,39 +71,66 @@ class ExploreFragment : Fragment() {
 
         languageButtons.forEachIndexed { index, button ->
             button.setOnClickListener {
-                filterProjectsByLanguage(languages[index])
+                val language = languages[index]
+                if (selectedLanguage == language) {
+                    selectedLanguage = null
+                    button.setTypeface(null, android.graphics.Typeface.NORMAL)
+                } else {
+                    selectedLanguage = language
+                    languageButtons.forEach { it.setTypeface(null, android.graphics.Typeface.NORMAL) }
+                    button.setTypeface(null, android.graphics.Typeface.BOLD)
+                }
+                filterProjects()
             }
         }
 
         typeButtons.forEachIndexed { index, button ->
             button.setOnClickListener {
-                filterProjectsByType(types[index])
+                val type = types[index]
+                if (selectedType == type) {
+                    selectedType = null
+                    button.setTypeface(null, android.graphics.Typeface.NORMAL)
+                } else {
+                    selectedType = type
+                    typeButtons.forEach { it.setTypeface(null, android.graphics.Typeface.NORMAL) }
+                    button.setTypeface(null, android.graphics.Typeface.BOLD)
+                }
+                filterProjects()
             }
         }
     }
 
-    private fun filterProjectsByLanguage(language: String) {
-        val filteredProjects = projects.filter { it.language == language }
-        adapter = ProjectsAdapter2(filteredProjects) { project ->
-            // 프로젝트 아이템 클릭 이벤트 처리
+    private fun filterProjects() {
+        val filteredProjects = projects.filter {
+            (selectedLanguage == null || it.language == selectedLanguage) &&
+                    (selectedType == null || it.type == selectedType)
         }
-        view?.findViewById<RecyclerView>(R.id.recycler_view_projects)?.adapter = adapter
-    }
-
-    private fun filterProjectsByType(type: String) {
-        val filteredProjects = projects.filter { it.type == type }
         adapter = ProjectsAdapter2(filteredProjects) { project ->
-            // 프로젝트 아이템 클릭 이벤트 처리
+            project?.let {
+                val intent = Intent(activity, ProjectDetailActivity::class.java).apply {
+                    putExtra("project", it)
+                }
+                startActivity(intent)
+            }
         }
         view?.findViewById<RecyclerView>(R.id.recycler_view_projects)?.adapter = adapter
     }
 
     private fun loadProjects(): List<Project> {
-        // 프로젝트 데이터 로드 (예: JSON 파일, 데이터베이스 등)
-        return listOf(
-            Project("Project 1", "2023-01-01", "2023-06-01", "Python", "Machine Learning", "Contents 1", likes = 5),
-            Project("Project 2", "2023-02-01", null, "Java", "Web Development", "Contents 2", likes = 3),
-            // 더 많은 프로젝트 데이터
-        )
+        val json: String?
+        try {
+            val inputStream = context?.assets?.open("projects.json")
+            val size = inputStream?.available()
+            val buffer = ByteArray(size!!)
+            inputStream.read(buffer)
+            inputStream.close()
+            json = String(buffer, StandardCharsets.UTF_8)
+        } catch (ex: IOException) {
+            ex.printStackTrace()
+            return emptyList()
+        }
+
+        val type = object : TypeToken<List<Project>>() {}.type
+        return Gson().fromJson(json, type)
     }
 }
