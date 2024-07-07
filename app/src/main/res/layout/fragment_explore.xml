@@ -1,13 +1,95 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- res/layout/fragment_explore.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <TextView
-        android:id="@+id/text_explore"
-        android:layout_width="wrap_content"
+    <!-- 언어 필터 버튼 -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="This is the Explore tab"
-        android:layout_centerInParent="true"
-        android:textSize="20sp" />
-</RelativeLayout>
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button_lang_python"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Python" />
+            <Button
+                android:id="@+id/button_lang_java"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Java" />
+            <Button
+                android:id="@+id/button_lang_kotlin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kotlin" />
+            <Button
+                android:id="@+id/button_lang_cpp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="C++" />
+            <Button
+                android:id="@+id/button_lang_js"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="JavaScript" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!-- 타입 필터 버튼 -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button_type_ml"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Machine Learning" />
+            <Button
+                android:id="@+id/button_type_web"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Web Development" />
+            <Button
+                android:id="@+id/button_type_mobile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mobile Development" />
+            <Button
+                android:id="@+id/button_type_blockchain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Blockchain" />
+            <Button
+                android:id="@+id/button_type_game"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Game Development" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!-- 프로젝트 리스트 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_projects"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="16dp" />
+
+</LinearLayout>
