@@ -6,20 +6,23 @@
     android:padding="16dp">
 
     <EditText
-        android:id="@+id/edit_text_contents"
+        android:id="@+id/edit_text_remember"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:hint="Enter your contents here"
+        android:hint="Enter your remember here"
         android:gravity="top"
         android:inputType="textMultiLine"
-        android:padding="8dp" />
+        android:padding="8dp"
+        android:visibility="gone" />
 
-    <Button
-        android:id="@+id/button_save"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Save"
-        android:layout_gravity="end"
-        android:padding="16dp" />
+    <TextView
+        android:id="@+id/text_view_remember"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="top"
+        android:textSize="16sp"
+        android:background="#f0f0f0"
+        android:padding="8dp" />
 </LinearLayout>

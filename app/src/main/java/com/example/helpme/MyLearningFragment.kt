@@ -186,8 +186,10 @@ class MyLearningFragment : Fragment() {
             val language = project.getString("language")
             val type = project.getString("type")
             val contents = project.optString("contents", "")
+            val references = project.optString("references", "")
+            val remember = project.optString("remember", "")
             val isLiked = project.optBoolean("isLiked", false)
-            projectsList.add(Project(title, startDate, endDate, language, type, contents, isLiked))
+            projectsList.add(Project(title, startDate, endDate, language, type, contents, references, remember, isLiked))
         }
 
         return projectsList

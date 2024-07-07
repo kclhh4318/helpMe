@@ -19,7 +19,7 @@ class ProjectDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_project_detail)
 
-        project = intent.getParcelableExtra("project") ?: Project("", "", "", "", "", "", false)
+        project = intent.getParcelableExtra("project") ?: Project("", "", "", "", "", "", "", "")
 
         val tabLayout: TabLayout = findViewById(R.id.tab_layout)
         val viewPager: ViewPager2 = findViewById(R.id.view_pager)

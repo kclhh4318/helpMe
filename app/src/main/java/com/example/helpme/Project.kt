@@ -9,7 +9,9 @@ data class Project(
     val endDate: String?,
     val language: String,
     val type: String,
-    var contents: String,
+    var contents: String = "",
+    var references: String = "",
+    var remember: String = "",
     var isLiked: Boolean = false
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
@@ -18,7 +20,9 @@ data class Project(
         parcel.readString(),
         parcel.readString() ?: "",
         parcel.readString() ?: "",
-        parcel.readString() ?: "",  // Add this line to read contents
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
+        parcel.readString() ?: "",
         parcel.readByte() != 0.toByte()
     )
 
@@ -28,7 +32,9 @@ data class Project(
         parcel.writeString(endDate)
         parcel.writeString(language)
         parcel.writeString(type)
-        parcel.writeString(contents)  // Add this line to write contents
+        parcel.writeString(contents)
+        parcel.writeString(references)
+        parcel.writeString(remember)
         parcel.writeByte(if (isLiked) 1 else 0)
     }
 

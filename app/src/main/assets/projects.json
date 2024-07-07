@@ -5,14 +5,22 @@
       "startDate": "2023-01-15",
       "endDate": null,
       "language": "Python",
-      "type": "Machine Learning"
+      "type": "Machine Learning",
+      "contents": "Some content",
+      "references": "Some references",
+      "remember": "Some remember notes",
+      "isLiked": true
     },
     {
       "title": "Blockchain Development",
       "startDate": "2023-03-01",
       "endDate": "2023-06-30",
       "language": "Solidity",
-      "type": "Blockchain"
+      "type": "Blockchain",
+      "contents": "Some content",
+      "references": "Some references",
+      "remember": "Some remember notes",
+      "isLiked": false
     }
   ]
 }

@@ -24,7 +24,7 @@ class ContentsFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_contents, container, false)
 
-        project = arguments?.getParcelable("project") ?: Project("", "", "", "", "", "", false)
+        project = arguments?.getParcelable("project") ?: Project("", "", "", "", "", "", "", "")
 
         editTextContents = view.findViewById(R.id.edit_text_contents)
         textViewContents = view.findViewById(R.id.text_view_contents)
