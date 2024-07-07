@@ -5,19 +5,59 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- Remember Section -->
+    <TextView
+        android:id="@+id/text_view_remember_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Remember"
+        android:textSize="18sp"
+        android:padding="8dp"
+        android:layout_marginBottom="8dp"/>
+
     <EditText
-        android:id="@+id/edit_text_contents"
+        android:id="@+id/edit_text_remember"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:hint="Enter your contents here"
+        android:hint="Enter your remember contents here"
         android:gravity="top"
         android:inputType="textMultiLine"
         android:padding="8dp"
         android:visibility="gone"/>
 
     <TextView
-        android:id="@+id/text_view_contents"
+        android:id="@+id/text_view_remember"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="top"
+        android:padding="8dp" />
+
+    <!-- Reference Section -->
+    <TextView
+        android:id="@+id/text_view_reference_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Reference"
+        android:textSize="18sp"
+        android:padding="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"/>
+
+    <EditText
+        android:id="@+id/edit_text_reference"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:hint="Enter your reference contents here"
+        android:gravity="top"
+        android:inputType="textMultiLine"
+        android:padding="8dp"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/text_view_reference"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"

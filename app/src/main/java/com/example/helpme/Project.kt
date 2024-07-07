@@ -10,7 +10,9 @@ data class Project(
     val language: String,
     val type: String,
     var contents: String,
-    var isLiked: Boolean = false
+    var isLiked: Boolean = false,
+    var remember: String = "",
+    var reference: String = ""
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString() ?: "",
@@ -18,8 +20,10 @@ data class Project(
         parcel.readString(),
         parcel.readString() ?: "",
         parcel.readString() ?: "",
-        parcel.readString() ?: "",  // Add this line to read contents
-        parcel.readByte() != 0.toByte()
+        parcel.readString() ?: "",
+        parcel.readByte() != 0.toByte(),
+        parcel.readString() ?: "",
+        parcel.readString() ?: ""
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -28,8 +32,10 @@ data class Project(
         parcel.writeString(endDate)
         parcel.writeString(language)
         parcel.writeString(type)
-        parcel.writeString(contents)  // Add this line to write contents
+        parcel.writeString(contents)
         parcel.writeByte(if (isLiked) 1 else 0)
+        parcel.writeString(remember)
+        parcel.writeString(reference)
     }
 
     override fun describeContents(): Int {
