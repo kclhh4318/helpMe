@@ -4,7 +4,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-    private const val BASE_URL = "" // Replace with your server URL
+    private const val BASE_URL = ""  // 서버 URL로 대체
 
     val instance: Retrofit by lazy {
         Retrofit.Builder()

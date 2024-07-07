@@ -9,6 +9,7 @@ data class User(
     val nickname: String
 )
 
+
 interface ApiService {
     @POST("/auth/kakao/callback")
     fun saveUser(@Body user: User): Call<Void>
