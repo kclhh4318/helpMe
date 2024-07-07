@@ -74,6 +74,10 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("com.google.android.material:material:1.4.0")
+    implementation ("androidx.fragment:fragment-ktx:1.3.6")
+    implementation ("androidx.viewpager2:viewpager2:1.0.0")
+
     kapt("androidx.room:room-compiler:2.6.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

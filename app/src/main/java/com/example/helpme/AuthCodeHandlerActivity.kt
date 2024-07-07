@@ -49,7 +49,7 @@ class AuthCodeHandlerActivity : AppCompatActivity() {
                     Log.e(TAG, "사용자 정보 요청 성공: ${user.kakaoAccount?.profile?.nickname}")
 
                     // 사용자 정보 전달
-                    val intent = Intent(this, MyStudyActivity::class.java)
+                    val intent = Intent(this, MainActivity::class.java)
                     intent.putExtra("nickname", user.kakaoAccount?.profile?.nickname)
                     intent.putExtra("email", user.kakaoAccount?.email)
                     startActivity(intent)
@@ -93,7 +93,7 @@ class AuthCodeHandlerActivity : AppCompatActivity() {
                             Log.e(TAG, "사용자 정보 요청 성공: ${user.kakaoAccount?.profile?.nickname}")
 
                             // 사용자 정보 전달
-                            val intent = Intent(this, MyStudyActivity::class.java)
+                            val intent = Intent(this, MainActivity::class.java)
                             intent.putExtra("nickname", user.kakaoAccount?.profile?.nickname)
                             intent.putExtra("email", user.kakaoAccount?.email)
                             startActivity(intent)

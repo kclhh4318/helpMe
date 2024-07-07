@@ -15,23 +15,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:largeHeap = "true"
+        android:largeHeap="true"
         tools:targetApi="31">
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="73d28d46234b215f640b16b0a6c105e9"
             />
         <activity
-            android:name=".MainActivity"
-
+            android:name=".LoginActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/AppTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <!-- intent-filter를 제거합니다. -->
         </activity>
 
         <activity android:name=".AuthCodeHandlerActivity">
@@ -48,11 +43,25 @@
                 <data android:host="oauth"
                     android:scheme="kakao73d28d46234b215f640b16b0a6c105e9" />
             </intent-filter>
-
         </activity>
 
-        <activity android:name=".MyStudyActivity" />
+        <activity
+            android:name=".MyStudyActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme">
+        </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
     </application>
-
 </manifest>

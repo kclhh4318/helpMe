@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/navigation_my_learning">
+
+    <fragment
+        android:id="@+id/navigation_my_learning"
+        android:name="com.example.helpme.MyLearningFragment"
+        android:label="내 학습"
+        tools:layout="@layout/fragment_my_learning" />
+
+    <fragment
+        android:id="@+id/navigation_explore"
+        android:name="com.example.helpme.ExploreFragment"
+        android:label="둘러보기"
+        tools:layout="@layout/fragment_explore" />
+</navigation>
