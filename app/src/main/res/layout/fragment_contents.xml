@@ -1,67 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
-
-    <!-- Remember Section -->
-    <TextView
-        android:id="@+id/text_view_remember_label"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Remember"
-        android:textSize="18sp"
-        android:padding="8dp"
-        android:layout_marginBottom="8dp"/>
+    android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/edit_text_remember"
+        android:id="@+id/contentsEditText"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:hint="Enter your remember contents here"
+        android:layout_height="match_parent"
+        android:hint="Enter contents here"
+        android:padding="16dp"
         android:gravity="top"
-        android:inputType="textMultiLine"
-        android:padding="8dp"
-        android:visibility="gone"/>
-
-    <TextView
-        android:id="@+id/text_view_remember"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="top"
-        android:padding="8dp" />
-
-    <!-- Reference Section -->
-    <TextView
-        android:id="@+id/text_view_reference_label"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Reference"
-        android:textSize="18sp"
-        android:padding="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"/>
-
-    <EditText
-        android:id="@+id/edit_text_reference"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:hint="Enter your reference contents here"
-        android:gravity="top"
-        android:inputType="textMultiLine"
-        android:padding="8dp"
-        android:visibility="gone"/>
-
-    <TextView
-        android:id="@+id/text_view_reference"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="top"
-        android:padding="8dp" />
-
-</LinearLayout>
+        android:inputType="textMultiLine" />
+</FrameLayout>

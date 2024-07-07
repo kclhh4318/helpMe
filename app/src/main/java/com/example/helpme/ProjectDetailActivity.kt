@@ -1,59 +1,52 @@
 package com.example.helpme
 
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayout
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
+import com.example.helpme.databinding.ActivityProjectDetailBinding
 
 class ProjectDetailActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityProjectDetailBinding
     private lateinit var project: Project
-    private lateinit var likeButton: ImageView
-    private lateinit var projectTitle: TextView
-    private lateinit var exitButton: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_project_detail)
+        binding = ActivityProjectDetailBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        project = intent.getParcelableExtra("project") ?: Project("", "", "", "", "", "", false)
+        // Project 데이터를 받아옴
+        project = intent.getParcelableExtra("project")!!
 
-        val tabLayout: TabLayout = findViewById(R.id.tab_layout)
-        val viewPager: ViewPager2 = findViewById(R.id.view_pager)
+        // 상단 뷰 설정
+        binding.projectTitle.text = project.title
+        setHeartIcon(project.isLiked)
 
-        val adapter = ProjectDetailPagerAdapter(this, project)
-        viewPager.adapter = adapter
-
-        // 드래그를 통해 페이지 전환을 비활성화
-        viewPager.isUserInputEnabled = false
-
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            tab.text = when (position) {
-                0 -> "Contents"
-                1 -> "Reference"
-                2 -> "Remember"
-                else -> ""
-            }
-        }.attach()
-
-        likeButton = findViewById(R.id.like_button)
-        projectTitle = findViewById(R.id.project_title)
-        exitButton = findViewById(R.id.exit_button)
-
-        projectTitle.text = project.title
-        likeButton.setImageResource(if (project.isLiked) R.drawable.ic_heart_on else R.drawable.ic_heart_off)
-
-        likeButton.setOnClickListener {
+        // 좋아요 버튼 클릭 리스너 설정
+        binding.heartIcon.setOnClickListener {
             project.isLiked = !project.isLiked
-            likeButton.setImageResource(if (project.isLiked) R.drawable.ic_heart_on else R.drawable.ic_heart_off)
-            // 여기서 데이터베이스에 좋아요 상태를 저장하는 코드 추가 가능
+            setHeartIcon(project.isLiked)
         }
 
-        exitButton.setOnClickListener {
+        // 종료 버튼 클릭 리스너 설정
+        binding.exitIcon.setOnClickListener {
             finish()
         }
+
+        // ViewPager와 TabLayout 설정
+        val pagerAdapter = ProjectDetailPagerAdapter(supportFragmentManager, project)
+        binding.viewPager.adapter = pagerAdapter
+        binding.tabLayout.setupWithViewPager(binding.viewPager)
+
+        // 드래그로 탭 전환 불가 설정
+        binding.viewPager.setOnTouchListener { _, _ -> true }
+    }
+
+    private fun setHeartIcon(isLiked: Boolean) {
+        val iconRes = if (isLiked) R.drawable.ic_heart_on else R.drawable.ic_heart_off
+        binding.heartIcon.setImageResource(iconRes)
     }
 }
