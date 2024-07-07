@@ -7,18 +7,22 @@
     <fragment
         android:id="@+id/navigation_my_learning"
         android:name="com.example.helpme.MyLearningFragment"
-        android:label="내 학습"
-        tools:layout="@layout/fragment_my_learning" />
+        android:label="My Learning"
+        tools:layout="@layout/fragment_my_learning" >
+        <argument
+            android:name="nickname"
+            app:argType="string" />
+        <argument
+            android:name="email"
+            app:argType="string" />
+        <argument
+            android:name="profile_image"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_explore"
         android:name="com.example.helpme.ExploreFragment"
         android:label="둘러보기"
         tools:layout="@layout/fragment_explore" />
-
-    <fragment
-        android:id="@+id/projectDetailFragment"
-        android:name="com.example.helpme.ProjectDetailFragment"
-        android:label="프로젝트 상세"
-        tools:layout="@layout/fragment_project_detail" />
 </navigation>

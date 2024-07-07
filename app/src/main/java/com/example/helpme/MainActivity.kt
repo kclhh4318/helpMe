@@ -10,7 +10,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.core.app.ActivityCompat
 import android.view.View
 
-
 class MainActivity : AppCompatActivity() {
 
     var backPressedTime: Long = 0
@@ -25,6 +24,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // nav_host_fragment를 findViewById로 참조합니다.
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
@@ -38,7 +38,12 @@ class MainActivity : AppCompatActivity() {
         navView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_my_learning -> {
-                    navController.navigate(R.id.navigation_my_learning)
+                    val bundle = Bundle().apply {
+                        putString("nickname", userNickname)
+                        putString("email", userEmail)
+                        putString("profile_image", userProfileImage)
+                    }
+                    navController.navigate(R.id.navigation_my_learning, bundle)
                     true
                 }
                 R.id.navigation_explore -> {
@@ -64,13 +69,5 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()
-    }
-
-    fun showBottomNavigation() {
-        navView.visibility = View.VISIBLE
-    }
-
-    fun hideBottomNavigation() {
-        navView.visibility = View.GONE
     }
 }

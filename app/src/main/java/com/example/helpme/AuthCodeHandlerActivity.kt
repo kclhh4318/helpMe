@@ -9,12 +9,7 @@ import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import android.content.Intent
-import com.example.helpme.network.ApiService
-import com.example.helpme.network.RetrofitClient
 import com.example.helpme.network.User
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class AuthCodeHandlerActivity : AppCompatActivity() {
 
@@ -30,33 +25,22 @@ class AuthCodeHandlerActivity : AppCompatActivity() {
                 } else if (user != null) {
                     Log.e(TAG, "사용자 정보 요청 성공: ${user.kakaoAccount?.profile?.nickname}")
 
-                    // 사용자 정보 서버로 전달
-                    val apiService = RetrofitClient.instance.create(ApiService::class.java)
+                    // 사용자 정보 직접 전달
                     val userToSend = User(
+                        id = user.id.toString(),
                         email = user.kakaoAccount?.email ?: "",
                         nickname = user.kakaoAccount?.profile?.nickname ?: ""
                     )
 
-                    apiService.saveUser(userToSend).enqueue(object : Callback<Void> {
-                        override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                            if (response.isSuccessful) {
-                                Log.d(TAG, "서버에 사용자 정보 저장 성공")
-                            } else {
-                                Log.e(TAG, "서버에 사용자 정보 저장 실패: ${response.code()}")
-                            }
-                        }
-
-                        override fun onFailure(call: Call<Void>, t: Throwable) {
-                            Log.e(TAG, "서버 요청 실패: ${t.message}")
-                        }
-                    })
-
                     // 사용자 정보 전달
-                    val intent = Intent(this, MainActivity::class.java)
-                    intent.putExtra("nickname", user.kakaoAccount?.profile?.nickname)
-                    intent.putExtra("email", user.kakaoAccount?.email)
-                    intent.putExtra("profile_image", user.kakaoAccount?.profile?.thumbnailImageUrl)
+                    val intent = Intent(this@AuthCodeHandlerActivity, MainActivity::class.java).apply {
+                        putExtra("nickname", userToSend.nickname)
+                        putExtra("email", userToSend.email)
+                        putExtra("profile_image", user.kakaoAccount?.profile?.thumbnailImageUrl)
+                    }
+                    Log.d(TAG, "MainActivity로 전환 시작")
                     startActivity(intent)
+                    finish()  // AuthCodeHandlerActivity 종료
                 }
             }
         }

@@ -6,8 +6,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.helpme.network.Project
 
-class ProjectsAdapter(private val projects: List<Project>, private val onItemClicked: (Project?) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ProjectsAdapter(private var projects: List<Project>, private val onItemClicked: (Project?) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val VIEW_TYPE_ITEM = 0
     private val VIEW_TYPE_ADD = 1
@@ -34,6 +35,11 @@ class ProjectsAdapter(private val projects: List<Project>, private val onItemCli
 
     override fun getItemCount(): Int {
         return projects.size + 1
+    }
+
+    fun updateProjects(newProjects: List<Project>) {
+        projects = newProjects
+        notifyDataSetChanged()
     }
 
     class ProjectViewHolder(itemView: View, private val onItemClicked: (Project?) -> Unit) : RecyclerView.ViewHolder(itemView) {
