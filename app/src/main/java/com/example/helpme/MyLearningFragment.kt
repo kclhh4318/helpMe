@@ -16,7 +16,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import org.json.JSONArray
 import org.json.JSONObject
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.nio.charset.Charset
 import java.text.SimpleDateFormat
@@ -25,6 +28,7 @@ import java.util.*
 class MyLearningFragment : Fragment() {
 
     private lateinit var nickname: String
+    private lateinit var email: String
     private lateinit var profileImage: String
     private lateinit var projects: MutableList<Project>
     private lateinit var adapter: ProjectsAdapter
@@ -43,6 +47,7 @@ class MyLearningFragment : Fragment() {
 
         val activity = activity as MainActivity
         nickname = activity.intent.getStringExtra("nickname") ?: "No Nickname"
+        email = activity.intent.getStringExtra("email") ?: "No Email" // 이메일 받아오기
         profileImage = activity.intent.getStringExtra("profile_image") ?: ""
 
         // JSON 데이터 로드
@@ -131,7 +136,7 @@ class MyLearningFragment : Fragment() {
             val type = spinnerType.selectedItem as String
 
             if (title.isNotEmpty() && startDate != null) {
-                val newProject = Project(title, startDate!!, endDate, language, type, contents = "", isLiked = false)
+                val newProject = Project(title, startDate!!, endDate, language, type, contents = "", isLiked = false, email = email) // 이메일 추가
                 projects.add(newProject)
                 adapter.notifyItemInserted(projects.size - 1)
                 saveProjects()
@@ -145,8 +150,9 @@ class MyLearningFragment : Fragment() {
     }
 
     private fun loadProjects(): MutableList<Project> {
-        val json = sharedPreferences.getString("projects_list", null)
-        return if (json != null) {
+        val jsonFile = File(requireContext().filesDir, "projects.json")
+        return if (jsonFile.exists()) {
+            val json = jsonFile.readText()
             val type = object : TypeToken<MutableList<Project>>() {}.type
             Gson().fromJson(json, type)
         } else {
@@ -155,13 +161,10 @@ class MyLearningFragment : Fragment() {
     }
 
     private fun saveProjects() {
-        val editor = sharedPreferences.edit()
-        val json = Gson().toJson(projects)
-        editor.putString("projects_list", json)
-        editor.apply()
+        saveJSONToAsset(projects)
     }
 
-    private fun loadJSONFromAsset(): List<Project> {
+    private fun loadJSONFromAsset(): MutableList<Project> {
         val json: String?
         try {
             val inputStream = context?.assets?.open("projects.json")
@@ -172,12 +175,12 @@ class MyLearningFragment : Fragment() {
             json = String(buffer, Charset.forName("UTF-8"))
         } catch (ex: IOException) {
             ex.printStackTrace()
-            return emptyList()
+            return mutableListOf()
         }
 
         val projectsList = mutableListOf<Project>()
-        val jsonObject = JSONObject(json)
-        val projectsArray = jsonObject.getJSONArray("projects")
+        val projectsArray = JSONArray(json)  // JSON 파일이 JSONArray 형식이므로 직접 JSONArray로 읽기
+
         for (i in 0 until projectsArray.length()) {
             val project = projectsArray.getJSONObject(i)
             val title = project.getString("title")
@@ -187,9 +190,36 @@ class MyLearningFragment : Fragment() {
             val type = project.getString("type")
             val contents = project.optString("contents", "")
             val isLiked = project.optBoolean("isLiked", false)
-            projectsList.add(Project(title, startDate, endDate, language, type, contents, isLiked))
+            val email = project.getString("email") // 이메일 필드 읽기
+            projectsList.add(Project(title, startDate, endDate, language, type, contents, isLiked, email = email))
         }
 
         return projectsList
+    }
+
+    private fun saveJSONToAsset(projects: MutableList<Project>) {
+        val projectsArray = JSONArray()
+
+        for (project in projects) {
+            val projectObject = JSONObject()
+            projectObject.put("title", project.title)
+            projectObject.put("startDate", project.startDate)
+            projectObject.put("endDate", project.endDate)
+            projectObject.put("language", project.language)
+            projectObject.put("type", project.type)
+            projectObject.put("contents", project.contents)
+            projectObject.put("isLiked", project.isLiked)
+            projectObject.put("email", project.email) // 이메일 필드 쓰기
+            projectsArray.put(projectObject)
+        }
+
+        val jsonString = projectsArray.toString()
+        try {
+            val outputStream: FileOutputStream = requireContext().openFileOutput("projects.json", Context.MODE_PRIVATE)
+            outputStream.write(jsonString.toByteArray())
+            outputStream.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }

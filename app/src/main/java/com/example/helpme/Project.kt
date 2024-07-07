@@ -13,7 +13,8 @@ data class Project(
     var isLiked: Boolean = false,
     var remember: String = "",
     var reference: String = "",
-    var likes: Int = 0
+    var likes: Int = 0,
+    val email: String // 이메일 필드 추가
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString() ?: "",
@@ -25,7 +26,8 @@ data class Project(
         parcel.readByte() != 0.toByte(),
         parcel.readString() ?: "",
         parcel.readString() ?: "",
-        parcel.readInt()
+        parcel.readInt(),
+        parcel.readString() ?: "" // 이메일 읽기
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -39,6 +41,7 @@ data class Project(
         parcel.writeString(remember)
         parcel.writeString(reference)
         parcel.writeInt(likes)
+        parcel.writeString(email) // 이메일 쓰기
     }
 
     override fun describeContents(): Int {
