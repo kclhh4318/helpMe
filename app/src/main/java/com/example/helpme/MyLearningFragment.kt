@@ -50,7 +50,16 @@ class MyLearningFragment : Fragment() {
         // 리사이클러뷰 설정
         val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view_projects)
         recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = ProjectsAdapter(projects)
+        recyclerView.adapter = ProjectsAdapter(projects) { project ->
+            val bundle = Bundle()
+            bundle.putParcelable("project", project)
+            val fragment = ProjectDetailFragment()
+            fragment.arguments = bundle
+            activity.supportFragmentManager.beginTransaction()
+                .replace(R.id.nav_host_fragment, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
 
         return view
     }

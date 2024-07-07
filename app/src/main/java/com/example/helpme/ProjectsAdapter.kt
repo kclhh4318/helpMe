@@ -7,13 +7,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-data class Project(val title: String, val startDate: String, val endDate: String?, val language: String, val type: String)
-
-class ProjectsAdapter(private val projects: List<Project>) : RecyclerView.Adapter<ProjectsAdapter.ProjectViewHolder>() {
+class ProjectsAdapter(private val projects: List<Project>, private val onItemClicked: (Project) -> Unit) : RecyclerView.Adapter<ProjectsAdapter.ProjectViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_project, parent, false)
-        return ProjectViewHolder(view)
+        return ProjectViewHolder(view, onItemClicked)
     }
 
     override fun onBindViewHolder(holder: ProjectViewHolder, position: Int) {
@@ -23,12 +21,13 @@ class ProjectsAdapter(private val projects: List<Project>) : RecyclerView.Adapte
 
     override fun getItemCount() = projects.size
 
-    class ProjectViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ProjectViewHolder(itemView: View, private val onItemClicked: (Project) -> Unit) : RecyclerView.ViewHolder(itemView) {
         private val iconFolder: ImageView = itemView.findViewById(R.id.icon_folder)
         private val titleTextView: TextView = itemView.findViewById(R.id.project_title)
         private val dateTextView: TextView = itemView.findViewById(R.id.project_date)
         private val languageTextView: TextView = itemView.findViewById(R.id.project_language)
         private val typeTextView: TextView = itemView.findViewById(R.id.project_type)
+        private val likeButton: ImageView = itemView.findViewById(R.id.like_button)
 
         fun bind(project: Project) {
             titleTextView.text = project.title
@@ -45,6 +44,17 @@ class ProjectsAdapter(private val projects: List<Project>) : RecyclerView.Adapte
 
             // 폴더 아이콘 설정 (이미지가 이미 추가된 상태여야 합니다)
             iconFolder.setImageResource(R.drawable.ic_folder)
+
+            // Set like button state
+            likeButton.setImageResource(if (project.isLiked) R.drawable.ic_heart_on else R.drawable.ic_heart_off)
+            likeButton.setOnClickListener {
+                project.isLiked = !project.isLiked
+                likeButton.setImageResource(if (project.isLiked) R.drawable.ic_heart_on else R.drawable.ic_heart_off)
+            }
+
+            itemView.setOnClickListener {
+                onItemClicked(project)
+            }
         }
     }
 }
