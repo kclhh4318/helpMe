@@ -76,45 +76,12 @@ class MyLearningFragment : Fragment() {
             val project = projectsArray.getJSONObject(i)
             val title = project.getString("title")
             val startDate = project.getString("startDate")
-            val endDate = project.optString("endDate")
+            val endDate = project.optString("endDate", null)
             val language = project.getString("language")
             val type = project.getString("type")
             projectsList.add(Project(title, startDate, endDate, language, type))
         }
 
         return projectsList
-    }
-}
-
-data class Project(val title: String, val startDate: String, val endDate: String?, val language: String, val type: String)
-
-class ProjectsAdapter(private val projects: List<Project>) : RecyclerView.Adapter<ProjectsAdapter.ProjectViewHolder>() {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_project, parent, false)
-        return ProjectViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: ProjectViewHolder, position: Int) {
-        val project = projects[position]
-        holder.bind(project)
-    }
-
-    override fun getItemCount() = projects.size
-
-    class ProjectViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val titleTextView: TextView = itemView.findViewById(R.id.project_title)
-        private val detailsTextView: TextView = itemView.findViewById(R.id.project_details)
-
-        fun bind(project: Project) {
-            titleTextView.text = project.title
-            detailsTextView.text = "Started: ${project.startDate} - Language: ${project.language} - Type: ${project.type}"
-
-            if (project.endDate == null) {
-                detailsTextView.text = "${detailsTextView.text} - Status: In Progress"
-            } else {
-                detailsTextView.text = "${detailsTextView.text} - Ended: ${project.endDate}"
-            }
-        }
     }
 }
