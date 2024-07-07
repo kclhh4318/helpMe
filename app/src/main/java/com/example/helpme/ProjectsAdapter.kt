@@ -7,27 +7,41 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class ProjectsAdapter(private val projects: List<Project>, private val onItemClicked: (Project) -> Unit) : RecyclerView.Adapter<ProjectsAdapter.ProjectViewHolder>() {
+class ProjectsAdapter(private val projects: List<Project>, private val onItemClicked: (Project?) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_project, parent, false)
-        return ProjectViewHolder(view, onItemClicked)
+    private val VIEW_TYPE_ITEM = 0
+    private val VIEW_TYPE_ADD = 1
+
+    override fun getItemViewType(position: Int): Int {
+        return if (position == projects.size) VIEW_TYPE_ADD else VIEW_TYPE_ITEM
     }
 
-    override fun onBindViewHolder(holder: ProjectViewHolder, position: Int) {
-        val project = projects[position]
-        holder.bind(project)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == VIEW_TYPE_ITEM) {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_project, parent, false)
+            ProjectViewHolder(view, onItemClicked)
+        } else {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_add_project, parent, false)
+            AddProjectViewHolder(view, onItemClicked)
+        }
     }
 
-    override fun getItemCount() = projects.size
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is ProjectViewHolder) {
+            holder.bind(projects[position])
+        }
+    }
 
-    class ProjectViewHolder(itemView: View, private val onItemClicked: (Project) -> Unit) : RecyclerView.ViewHolder(itemView) {
+    override fun getItemCount(): Int {
+        return projects.size + 1
+    }
+
+    class ProjectViewHolder(itemView: View, private val onItemClicked: (Project?) -> Unit) : RecyclerView.ViewHolder(itemView) {
         private val iconFolder: ImageView = itemView.findViewById(R.id.icon_folder)
         private val titleTextView: TextView = itemView.findViewById(R.id.project_title)
         private val dateTextView: TextView = itemView.findViewById(R.id.project_date)
         private val languageTextView: TextView = itemView.findViewById(R.id.project_language)
         private val typeTextView: TextView = itemView.findViewById(R.id.project_type)
-        private val likeButton: ImageView = itemView.findViewById(R.id.like_button)
 
         fun bind(project: Project) {
             titleTextView.text = project.title
@@ -45,15 +59,16 @@ class ProjectsAdapter(private val projects: List<Project>, private val onItemCli
             // 폴더 아이콘 설정 (이미지가 이미 추가된 상태여야 합니다)
             iconFolder.setImageResource(R.drawable.ic_folder)
 
-            // Set like button state
-            likeButton.setImageResource(if (project.isLiked) R.drawable.ic_heart_on else R.drawable.ic_heart_off)
-            likeButton.setOnClickListener {
-                project.isLiked = !project.isLiked
-                likeButton.setImageResource(if (project.isLiked) R.drawable.ic_heart_on else R.drawable.ic_heart_off)
-            }
-
             itemView.setOnClickListener {
                 onItemClicked(project)
+            }
+        }
+    }
+
+    class AddProjectViewHolder(itemView: View, private val onItemClicked: (Project?) -> Unit) : RecyclerView.ViewHolder(itemView) {
+        init {
+            itemView.setOnClickListener {
+                onItemClicked(null)
             }
         }
     }
