@@ -16,7 +16,7 @@ class ReferenceFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_reference, container, false)
 
-        project = arguments?.getParcelable("project") ?: Project("", "", "", "", "", false)
+        project = arguments?.getParcelable("project") ?: Project("", "", "", "", "", "", false)
 
         // Initialize views and set up content recording
 

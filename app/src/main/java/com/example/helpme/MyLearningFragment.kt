@@ -3,6 +3,7 @@ package com.example.helpme
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -24,7 +25,6 @@ import java.util.*
 class MyLearningFragment : Fragment() {
 
     private lateinit var nickname: String
-    private lateinit var email: String
     private lateinit var profileImage: String
     private lateinit var projects: MutableList<Project>
     private lateinit var adapter: ProjectsAdapter
@@ -43,19 +43,22 @@ class MyLearningFragment : Fragment() {
 
         val activity = activity as MainActivity
         nickname = activity.intent.getStringExtra("nickname") ?: "No Nickname"
-        email = activity.intent.getStringExtra("email") ?: "No Email"
         profileImage = activity.intent.getStringExtra("profile_image") ?: ""
 
         // JSON 데이터 로드
-        projects = loadProjects()
+        projects = loadProjects().filter { it.endDate == null }.toMutableList()
+
+        // 가장 많이 사용하는 언어와 개발 타입
+        val mostUsedLanguage = projects.groupBy { it.language }.maxByOrNull { it.value.size }?.key ?: "N/A"
+        val mostUsedType = projects.groupBy { it.type }.maxByOrNull { it.value.size }?.key ?: "N/A"
 
         // 프로필 설정
         val profileImageView: ImageView = view.findViewById(R.id.profile_image)
         val nicknameTextView: TextView = view.findViewById(R.id.text_my_learning)
-        val emailTextView: TextView = view.findViewById(R.id.text_email)
+        val mostUsedTextView: TextView = view.findViewById(R.id.text_most_used)
 
-        nicknameTextView.text = "Nickname: $nickname"
-        emailTextView.text = "Email: $email"
+        nicknameTextView.text = "$nickname 님, 어서오세요!"
+        mostUsedTextView.text = "$mostUsedLanguage, $mostUsedType\n가장 열심히 공부하고 있어요!"
         Glide.with(this)
             .load(profileImage)
             .placeholder(R.drawable.ic_profile_placeholder)
@@ -68,14 +71,10 @@ class MyLearningFragment : Fragment() {
             if (project == null) {
                 showAddProjectDialog()
             } else {
-                val bundle = Bundle()
-                bundle.putParcelable("project", project)
-                val fragment = ProjectDetailFragment()
-                fragment.arguments = bundle
-                activity.supportFragmentManager.beginTransaction()
-                    .replace(R.id.nav_host_fragment, fragment)
-                    .addToBackStack(null)
-                    .commit()
+                val intent = Intent(activity, ProjectDetailActivity::class.java).apply {
+                    putExtra("project", project)
+                }
+                startActivity(intent)
             }
         }
         recyclerView.adapter = adapter
@@ -132,7 +131,7 @@ class MyLearningFragment : Fragment() {
             val type = spinnerType.selectedItem as String
 
             if (title.isNotEmpty() && startDate != null) {
-                val newProject = Project(title, startDate!!, endDate, language, type)
+                val newProject = Project(title, startDate!!, endDate, language, type, contents = "", isLiked = false)
                 projects.add(newProject)
                 adapter.notifyItemInserted(projects.size - 1)
                 saveProjects()
@@ -186,7 +185,9 @@ class MyLearningFragment : Fragment() {
             val endDate = project.optString("endDate", null)
             val language = project.getString("language")
             val type = project.getString("type")
-            projectsList.add(Project(title, startDate, endDate, language, type))
+            val contents = project.optString("contents", "")
+            val isLiked = project.optBoolean("isLiked", false)
+            projectsList.add(Project(title, startDate, endDate, language, type, contents, isLiked))
         }
 
         return projectsList

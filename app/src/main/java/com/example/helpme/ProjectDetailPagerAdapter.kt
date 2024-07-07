@@ -1,9 +1,10 @@
 package com.example.helpme
 
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
-class ProjectDetailPagerAdapter(fragment: Fragment, private val project: Project) : FragmentStateAdapter(fragment) {
+class ProjectDetailPagerAdapter(activity: FragmentActivity, private val project: Project) : FragmentStateAdapter(activity) {
 
     override fun getItemCount(): Int = 3
 

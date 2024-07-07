@@ -15,4 +15,10 @@
         android:name="com.example.helpme.ExploreFragment"
         android:label="둘러보기"
         tools:layout="@layout/fragment_explore" />
+
+    <fragment
+        android:id="@+id/projectDetailFragment"
+        android:name="com.example.helpme.ProjectDetailFragment"
+        android:label="프로젝트 상세"
+        tools:layout="@layout/fragment_project_detail" />
 </navigation>

@@ -16,7 +16,7 @@ class RememberFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_remember, container, false)
 
-        project = arguments?.getParcelable("project") ?: Project("", "", "", "", "", false)
+        project = arguments?.getParcelable("project") ?: Project("", "", "", "", "", "", false)
 
         // Initialize views and set up content recording
 
