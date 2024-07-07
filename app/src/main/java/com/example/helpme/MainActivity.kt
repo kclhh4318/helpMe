@@ -10,6 +10,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController
+    private lateinit var userNickname: String
+    private lateinit var userEmail: String
+    private lateinit var userProfileImage: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,6 +23,10 @@ class MainActivity : AppCompatActivity() {
 
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
         navView.setupWithNavController(navController)
+
+        userNickname = intent.getStringExtra("nickname") ?: "No Nickname"
+        userEmail = intent.getStringExtra("email") ?: "No Email"
+        userProfileImage = intent.getStringExtra("profile_image") ?: ""
 
         navView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
