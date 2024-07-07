@@ -1,13 +1,17 @@
 package com.example.helpme
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.core.app.ActivityCompat
 
 class MainActivity : AppCompatActivity() {
+
+    var backPressedTime: Long = 0
 
     private lateinit var navController: NavController
     private lateinit var userNickname: String
@@ -40,6 +44,18 @@ class MainActivity : AppCompatActivity() {
                 }
                 else -> false
             }
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    override fun onBackPressed() {
+        if (System.currentTimeMillis() - backPressedTime >= 1500) {
+            backPressedTime = System.currentTimeMillis()
+            Toast.makeText(this, "뒤로가기 버튼을 한번 더 눌러서 종료하세요.", Toast.LENGTH_SHORT).show()
+        } else {
+            ActivityCompat.finishAffinity(this)
+            System.runFinalization()
+            System.exit(0)
         }
     }
 

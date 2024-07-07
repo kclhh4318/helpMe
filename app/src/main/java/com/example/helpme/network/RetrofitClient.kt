@@ -4,7 +4,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-    private const val BASE_URL = ""  // 서버 URL로 대체
+    private const val BASE_URL = "https://127.0.0.1:8000"  // 서버 URL로 대체
 
     val instance: Retrofit by lazy {
         Retrofit.Builder()
