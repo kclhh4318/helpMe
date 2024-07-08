@@ -9,27 +9,34 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
     @POST("/auth/kakao/callback")
     fun saveUser(@Body user: User): Call<Void>
 
-    @GET("/projects/user/{user_id}")
-    fun getUserProjects(@Path("user_id") userId: String): Call<List<Project>>
+    @GET("/user")
+    fun getUserProjects(@Query("user_id") userId: String): Call<List<Project>>
 
-    @POST("/projects")
+    //새 프로젝트 만들기
+    @POST("/newproj")
     fun createProject(@Body newProject: Project): Call<Void>
 
-    @GET("/projects/{proj_id}/details")
-    fun getProjectDetails(@Path("proj_id") projectId: Int): Call<ProjectDetail>
+    @POST("/detailin")
+    fun createProjectDetail(@Body newProjectDetail: ProjectDetail): Call<Void>
 
-    @PUT("/projects/{proj_id}")
+    @GET("/detailout")
+    fun getProjectDetails(@Query("proj_id") projId: String,
+                          @Query("user_id") userId: String): Call<List<ProjectDetail>>
+
+    @PUT("/updateprojdetail/{proj_id}")
     fun updateProjectDetail(@Path("proj_id") projectId: Int, @Body project: ProjectDetail): Call<Void>
 
-    @PUT("/projects/updateContents")
-    fun updateProjectContents(@Body projectDetail: ProjectDetail): Call<Void>
+    //@PUT("/projects/updateContents")
+    //fun updateProjectContents(@Body projectDetail: ProjectDetail): Call<Void>
 
-    @GET("/projects")
+    //전달값이 없으므로 @Query를 작성할 필요가 없다.
+    @GET("/orderbylikes")
     fun getAllProjects(): Call<List<ProjectDetail>>
 
     @PUT("/projects/editProject/{id}")

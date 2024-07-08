@@ -71,12 +71,12 @@ class RememberFragment : Fragment() {
             binding.rememberEditText.visibility = View.GONE
             binding.rememberTextView.text = binding.rememberEditText.text.toString()
             project.remember = binding.rememberEditText.text.toString()
-            updateProjectContents()
+            //updateProjectContents()
             val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(binding.rememberEditText.windowToken, 0)
         }
     }
-
+    /*
     private fun updateProjectContents() {
         val apiService = RetrofitClient.instance.create(ApiService::class.java)
         apiService.updateProjectContents(project).enqueue(object : Callback<Void> {
@@ -91,7 +91,7 @@ class RememberFragment : Fragment() {
             }
         })
     }
-
+*/
     companion object {
         fun newInstance(project: ProjectDetail): RememberFragment {
             val fragment = RememberFragment()

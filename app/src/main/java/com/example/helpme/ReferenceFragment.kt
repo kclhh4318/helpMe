@@ -71,11 +71,13 @@ class ReferenceFragment : Fragment() {
             binding.referenceEditText.visibility = View.GONE
             binding.referenceTextView.text = binding.referenceEditText.text.toString()
             project.ref = binding.referenceEditText.text.toString()
-            updateProjectContents()
+            //updateProjectContents()
             val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(binding.referenceEditText.windowToken, 0)
         }
     }
+
+    /*
 
     private fun updateProjectContents() {
         val apiService = RetrofitClient.instance.create(ApiService::class.java)
@@ -91,6 +93,8 @@ class ReferenceFragment : Fragment() {
             }
         })
     }
+
+     */
 
     companion object {
         fun newInstance(project: ProjectDetail): ReferenceFragment {

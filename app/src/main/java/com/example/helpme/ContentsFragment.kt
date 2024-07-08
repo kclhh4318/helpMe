@@ -71,12 +71,13 @@ class ContentsFragment : Fragment() {
             binding.contentsEditText.visibility = View.GONE
             binding.contentsTextView.text = binding.contentsEditText.text.toString()
             project.contents = binding.contentsEditText.text.toString()
-            updateProjectContents()
+            // updateProjectContents()
             val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(binding.contentsEditText.windowToken, 0)
         }
     }
 
+    /*
     private fun updateProjectContents() {
         val apiService = RetrofitClient.instance.create(ApiService::class.java)
         apiService.updateProjectContents(project).enqueue(object : Callback<Void> {
@@ -91,6 +92,8 @@ class ContentsFragment : Fragment() {
             }
         })
     }
+    */
+
 
     companion object {
         fun newInstance(project: ProjectDetail): ContentsFragment {

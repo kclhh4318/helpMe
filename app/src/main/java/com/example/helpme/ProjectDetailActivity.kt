@@ -44,12 +44,17 @@ class ProjectDetailActivity : AppCompatActivity() {
 
     private fun loadProjectDetails(projectId: Int) {
         val apiService = RetrofitClient.instance.create(ApiService::class.java)
-        apiService.getProjectDetails(projectId).enqueue(object : Callback<ProjectDetail> {
-            override fun onResponse(call: Call<ProjectDetail>, response: Response<ProjectDetail>) {
+        apiService.getProjectDetails(projectId.toString(), currentUserEmail).enqueue(object : Callback<List<ProjectDetail>> {
+            override fun onResponse(call: Call<List<ProjectDetail>>, response: Response<List<ProjectDetail>>) {
                 if (response.isSuccessful) {
-                    response.body()?.let {
-                        projectDetail = it
-                        setupUI()
+                    response.body()?.let { projectDetails ->
+                        if (projectDetails.isNotEmpty()) {
+                            projectDetail = projectDetails[0]  // 첫 번째 프로젝트 상세 정보 가져오기
+                            setupUI()
+                        } else {
+                            Toast.makeText(this@ProjectDetailActivity, "Project details not found", Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
                     } ?: run {
                         Toast.makeText(this@ProjectDetailActivity, "Project details not found", Toast.LENGTH_SHORT).show()
                         finish()
@@ -60,7 +65,7 @@ class ProjectDetailActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<ProjectDetail>, t: Throwable) {
+            override fun onFailure(call: Call<List<ProjectDetail>>, t: Throwable) {
                 Toast.makeText(this@ProjectDetailActivity, "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
                 finish()
             }
