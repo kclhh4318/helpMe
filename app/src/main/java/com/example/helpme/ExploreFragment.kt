@@ -1,7 +1,6 @@
 package com.example.helpme
 
 import android.content.Intent
-import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,12 +17,10 @@ import java.nio.charset.StandardCharsets
 
 class ExploreFragment : Fragment() {
 
+    private lateinit var dbHelper: LikedProjectsDatabaseHelper
     private var currentUserEmail: String = ""
-
     private lateinit var projects: MutableList<Project>
     private lateinit var adapter: ProjectsAdapter2
-    private lateinit var dbHelper: LikedProjectsDatabaseHelper
-    private lateinit var db: SQLiteDatabase
 
     private val languages = arrayOf("Python", "Java", "Kotlin", "C++", "JavaScript")
     private val types = arrayOf("Machine Learning", "Web Development", "Mobile Development", "Blockchain", "Game Development")
@@ -37,7 +34,6 @@ class ExploreFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_explore, container, false)
 
         dbHelper = LikedProjectsDatabaseHelper(requireContext())
-        db = dbHelper.writableDatabase
 
         // 프로젝트 데이터 로드
         projects = loadProjects().toMutableList()
@@ -46,7 +42,7 @@ class ExploreFragment : Fragment() {
         currentUserEmail = "current_user_email@example.com" // 예시로 이메일을 설정합니다. 실제로는 로그인 정보를 사용하세요.
 
         // 좋아요 상태 초기화
-        projects.forEach { it.isLiked = isProjectLiked(it, currentUserEmail) }
+        projects.forEach { it.isLiked = dbHelper.isProjectLiked(it.title, currentUserEmail) }
 
         // 리사이클러뷰 설정
         val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view_projects)
@@ -121,11 +117,13 @@ class ExploreFragment : Fragment() {
             (selectedLanguage == null || it.language == selectedLanguage) &&
                     (selectedType == null || it.type == selectedType)
         }
-        adapter = ProjectsAdapter2(requireContext(), filteredProjects) { project ->
+        adapter = ProjectsAdapter2(requireContext(), projects) { project ->
             project?.let {
                 val intent = Intent(activity, ProjectDetailActivity::class.java).apply {
                     putExtra("project", it)
                     putExtra("currentUserEmail", currentUserEmail)
+                    putExtra("isLiked", it.isLiked)  // 좋아요 상태를 전달합니다.
+                    putExtra("likes", it.likes)      // 좋아요 개수를 전달합니다.
                 }
                 startActivityForResult(intent, REQUEST_CODE_PROJECT_DETAIL)
             }
@@ -148,37 +146,34 @@ class ExploreFragment : Fragment() {
         }
 
         val type = object : TypeToken<List<Project>>() {}.type
-        return Gson().fromJson(json, type)
+        val projects = Gson().fromJson<List<Project>>(json, type)
+
+        // 각 프로젝트의 좋아요 상태와 개수를 데이터베이스에서 가져옵니다
+        projects.forEach { project ->
+            project.isLiked = dbHelper.isProjectLiked(project.title, currentUserEmail)
+            project.likes = dbHelper.getProjectLikes(project.title)
+        }
+
+        return projects
     }
 
-    private fun isProjectLiked(project: Project, email: String): Boolean {
-        val selection = "${LikedProjectsDatabaseHelper.COLUMN_PROJECT_ID} = ? AND ${LikedProjectsDatabaseHelper.COLUMN_USER_EMAIL} = ?"
-        val selectionArgs = arrayOf(project.title, email)
-        val cursor = db.query(
-            LikedProjectsDatabaseHelper.TABLE_NAME,
-            null,
-            selection,
-            selectionArgs,
-            null,
-            null,
-            null
-        )
-        val isLiked = cursor.count > 0
-        cursor.close()
-        return isLiked
-    }
-
+    // onActivityResult 메소드를 수정합니다.
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_PROJECT_DETAIL && resultCode == AppCompatActivity.RESULT_OK) {
             data?.getParcelableExtra<Project>("updatedProject")?.let { updatedProject ->
-                projects.find { it.title == updatedProject.title }?.apply {
-                    isLiked = updatedProject.isLiked
-                    likes = updatedProject.likes
+                val index = projects.indexOfFirst { it.title == updatedProject.title }
+                if (index != -1) {
+                    projects[index] = updatedProject
+                    adapter.notifyItemChanged(index)
                 }
-                adapter.notifyDataSetChanged()
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        dbHelper.close()
     }
 
     companion object {
