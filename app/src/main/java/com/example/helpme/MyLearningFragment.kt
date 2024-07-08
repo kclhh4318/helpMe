@@ -27,6 +27,8 @@ import java.util.*
 
 class MyLearningFragment : Fragment() {
 
+    private var currentUserEmail: String = ""
+
     private lateinit var nickname: String
     private lateinit var email: String
     private lateinit var profileImage: String
@@ -51,7 +53,9 @@ class MyLearningFragment : Fragment() {
         profileImage = activity.intent.getStringExtra("profile_image") ?: ""
 
         // JSON 데이터 로드
-        projects = loadProjects().filter { it.endDate == null }.toMutableList()
+        projects = loadProjects()
+            .filter { it.email == email && it.endDate == null }
+            .toMutableList()
 
         // 가장 많이 사용하는 언어와 개발 타입
         val mostUsedLanguage = projects.groupBy { it.language }.maxByOrNull { it.value.size }?.key ?: "N/A"
@@ -78,6 +82,7 @@ class MyLearningFragment : Fragment() {
             } else {
                 val intent = Intent(activity, ProjectDetailActivity::class.java).apply {
                     putExtra("project", project)
+                    putExtra("currentUerEmail", currentUserEmail)
                 }
                 startActivity(intent)
             }
@@ -136,7 +141,16 @@ class MyLearningFragment : Fragment() {
             val type = spinnerType.selectedItem as String
 
             if (title.isNotEmpty() && startDate != null) {
-                val newProject = Project(title, startDate!!, endDate, language, type, contents = "", isLiked = false, email = email) // 이메일 추가
+                val newProject = Project(
+                    title = title,
+                    startDate = startDate!!,
+                    endDate = null,
+                    language = language,
+                    type = type,
+                    contents = "",
+                    isLiked = false,
+                    email = email  // 현재 사용자의 이메일
+                )
                 projects.add(newProject)
                 adapter.notifyItemInserted(projects.size - 1)
                 saveProjects()

@@ -1,11 +1,13 @@
 package com.example.helpme
 
 import android.content.Intent
+import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,8 +18,12 @@ import java.nio.charset.StandardCharsets
 
 class ExploreFragment : Fragment() {
 
+    private var currentUserEmail: String = ""
+
     private lateinit var projects: MutableList<Project>
     private lateinit var adapter: ProjectsAdapter2
+    private lateinit var dbHelper: LikedProjectsDatabaseHelper
+    private lateinit var db: SQLiteDatabase
 
     private val languages = arrayOf("Python", "Java", "Kotlin", "C++", "JavaScript")
     private val types = arrayOf("Machine Learning", "Web Development", "Mobile Development", "Blockchain", "Game Development")
@@ -30,18 +36,28 @@ class ExploreFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_explore, container, false)
 
+        dbHelper = LikedProjectsDatabaseHelper(requireContext())
+        db = dbHelper.writableDatabase
+
         // 프로젝트 데이터 로드
         projects = loadProjects().toMutableList()
+
+        // 현재 사용자 이메일 설정
+        currentUserEmail = "current_user_email@example.com" // 예시로 이메일을 설정합니다. 실제로는 로그인 정보를 사용하세요.
+
+        // 좋아요 상태 초기화
+        projects.forEach { it.isLiked = isProjectLiked(it, currentUserEmail) }
 
         // 리사이클러뷰 설정
         val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view_projects)
         recyclerView.layoutManager = LinearLayoutManager(context)
-        adapter = ProjectsAdapter2(projects) { project ->
+        adapter = ProjectsAdapter2(requireContext(), projects) { project ->
             project?.let {
                 val intent = Intent(activity, ProjectDetailActivity::class.java).apply {
                     putExtra("project", it)
+                    putExtra("currentUserEmail", currentUserEmail)
                 }
-                startActivity(intent)
+                startActivityForResult(intent, REQUEST_CODE_PROJECT_DETAIL)
             }
         }
         recyclerView.adapter = adapter
@@ -105,12 +121,13 @@ class ExploreFragment : Fragment() {
             (selectedLanguage == null || it.language == selectedLanguage) &&
                     (selectedType == null || it.type == selectedType)
         }
-        adapter = ProjectsAdapter2(filteredProjects) { project ->
+        adapter = ProjectsAdapter2(requireContext(), filteredProjects) { project ->
             project?.let {
                 val intent = Intent(activity, ProjectDetailActivity::class.java).apply {
                     putExtra("project", it)
+                    putExtra("currentUserEmail", currentUserEmail)
                 }
-                startActivity(intent)
+                startActivityForResult(intent, REQUEST_CODE_PROJECT_DETAIL)
             }
         }
         view?.findViewById<RecyclerView>(R.id.recycler_view_projects)?.adapter = adapter
@@ -132,5 +149,39 @@ class ExploreFragment : Fragment() {
 
         val type = object : TypeToken<List<Project>>() {}.type
         return Gson().fromJson(json, type)
+    }
+
+    private fun isProjectLiked(project: Project, email: String): Boolean {
+        val selection = "${LikedProjectsDatabaseHelper.COLUMN_PROJECT_ID} = ? AND ${LikedProjectsDatabaseHelper.COLUMN_USER_EMAIL} = ?"
+        val selectionArgs = arrayOf(project.title, email)
+        val cursor = db.query(
+            LikedProjectsDatabaseHelper.TABLE_NAME,
+            null,
+            selection,
+            selectionArgs,
+            null,
+            null,
+            null
+        )
+        val isLiked = cursor.count > 0
+        cursor.close()
+        return isLiked
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_PROJECT_DETAIL && resultCode == AppCompatActivity.RESULT_OK) {
+            data?.getParcelableExtra<Project>("updatedProject")?.let { updatedProject ->
+                projects.find { it.title == updatedProject.title }?.apply {
+                    isLiked = updatedProject.isLiked
+                    likes = updatedProject.likes
+                }
+                adapter.notifyDataSetChanged()
+            }
+        }
+    }
+
+    companion object {
+        private const val REQUEST_CODE_PROJECT_DETAIL = 1
     }
 }

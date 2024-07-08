@@ -9,7 +9,8 @@
     "isLiked": false,
     "remember": "",
     "reference": "",
-    "likes": 5
+    "likes": 5,
+    "email": "dkjfl@naver.com"
   },
   {
     "title": "Project 2",
@@ -21,6 +22,7 @@
     "isLiked": false,
     "remember": "",
     "reference": "",
-    "likes": 3
+    "likes": 3,
+    "email": "kclhh4318@kakao.com"
   }
 ]
