@@ -10,11 +10,8 @@ import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.json.JSONArray
-import org.json.JSONObject
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
-import java.io.InputStreamReader
 import java.nio.charset.Charset
 
 class MyPageActivity : AppCompatActivity() {
@@ -51,7 +48,7 @@ class MyPageActivity : AppCompatActivity() {
 
         // Set RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = MyPageProjectAdapter(projects)
+        recyclerView.adapter = MyPageProjectAdapter(projects, email)
 
         // Exit functionality
         exitIcon.setOnClickListener {

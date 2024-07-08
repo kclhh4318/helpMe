@@ -50,6 +50,9 @@ class ProjectDetailActivity : AppCompatActivity() {
         binding.exitIcon.setOnClickListener {
             finish()
         }
+
+        // 프로젝트 정보 설정
+        binding.projectTitle.text = project.title
     }
 
     private fun setHeartIcon(isLiked: Boolean, isCurrentUserProject: Boolean) {
