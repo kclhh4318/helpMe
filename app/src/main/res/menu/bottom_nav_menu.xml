@@ -1,10 +1,13 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/navigation_my_learning"
         android:icon="@drawable/ic_home"
-        android:title="My Study" />
+        android:title=""
+        app:labelVisibilityMode="unlabeled" />
     <item
         android:id="@+id/navigation_explore"
         android:icon="@drawable/ic_book"
-        android:title="Explore" />
+        android:title=""
+        app:labelVisibilityMode="unlabeled" />
 </menu>
