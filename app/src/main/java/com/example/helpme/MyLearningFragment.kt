@@ -49,7 +49,7 @@ class MyLearningFragment : Fragment() {
 
         val activity = activity as MainActivity
         nickname = activity.intent.getStringExtra("nickname") ?: "No Nickname"
-        email = activity.intent.getStringExtra("email") ?: "No Email" // 이메일 받아오기
+        email = activity.intent.getStringExtra("email") ?: "No Email"
         profileImage = activity.intent.getStringExtra("profile_image") ?: ""
 
         // JSON 데이터 로드
@@ -62,6 +62,7 @@ class MyLearningFragment : Fragment() {
         val mostUsedType = projects.groupBy { it.type }.maxByOrNull { it.value.size }?.key ?: "N/A"
 
         // 프로필 설정
+        val profileSection: LinearLayout = view.findViewById(R.id.profile_section)
         val profileImageView: ImageView = view.findViewById(R.id.profile_image)
         val nicknameTextView: TextView = view.findViewById(R.id.text_my_learning)
         val mostUsedTextView: TextView = view.findViewById(R.id.text_most_used)
@@ -73,6 +74,16 @@ class MyLearningFragment : Fragment() {
             .placeholder(R.drawable.ic_profile_placeholder)
             .into(profileImageView)
 
+        // 프로필 섹션 클릭 리스너 설정
+        profileSection.setOnClickListener {
+            val intent = Intent(activity, MyPageActivity::class.java).apply {
+                putExtra("nickname", nickname)
+                putExtra("email", email)
+                putExtra("profile_image", profileImage)
+            }
+            startActivity(intent)
+        }
+
         // 리사이클러뷰 설정
         val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view_projects)
         recyclerView.layoutManager = LinearLayoutManager(context)
@@ -82,7 +93,7 @@ class MyLearningFragment : Fragment() {
             } else {
                 val intent = Intent(activity, ProjectDetailActivity::class.java).apply {
                     putExtra("project", project)
-                    putExtra("currentUerEmail", currentUserEmail)
+                    putExtra("currentUserEmail", currentUserEmail)
                 }
                 startActivity(intent)
             }
@@ -149,7 +160,7 @@ class MyLearningFragment : Fragment() {
                     type = type,
                     contents = "",
                     isLiked = false,
-                    email = email  // 현재 사용자의 이메일
+                    email = email
                 )
                 projects.add(newProject)
                 adapter.notifyItemInserted(projects.size - 1)
@@ -193,7 +204,7 @@ class MyLearningFragment : Fragment() {
         }
 
         val projectsList = mutableListOf<Project>()
-        val projectsArray = JSONArray(json)  // JSON 파일이 JSONArray 형식이므로 직접 JSONArray로 읽기
+        val projectsArray = JSONArray(json)
 
         for (i in 0 until projectsArray.length()) {
             val project = projectsArray.getJSONObject(i)
@@ -204,7 +215,7 @@ class MyLearningFragment : Fragment() {
             val type = project.getString("type")
             val contents = project.optString("contents", "")
             val isLiked = project.optBoolean("isLiked", false)
-            val email = project.getString("email") // 이메일 필드 읽기
+            val email = project.getString("email")
             projectsList.add(Project(title, startDate, endDate, language, type, contents, isLiked, email = email))
         }
 
@@ -223,7 +234,7 @@ class MyLearningFragment : Fragment() {
             projectObject.put("type", project.type)
             projectObject.put("contents", project.contents)
             projectObject.put("isLiked", project.isLiked)
-            projectObject.put("email", project.email) // 이메일 필드 쓰기
+            projectObject.put("email", project.email)
             projectsArray.put(projectObject)
         }
 

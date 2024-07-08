@@ -57,6 +57,7 @@
         </activity>
 
         <activity android:name=".ProjectDetailActivity"></activity>
+        <activity android:name=".MyPageActivity"></activity>
 
     </application>
 </manifest>
