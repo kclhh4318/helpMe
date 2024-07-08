@@ -7,6 +7,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import org.json.JSONArray
+import org.json.JSONObject
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStreamReader
+import java.nio.charset.Charset
 
 class MyPageActivity : AppCompatActivity() {
 
@@ -51,11 +60,46 @@ class MyPageActivity : AppCompatActivity() {
     }
 
     private fun loadProjects(): List<Project> {
-        // This method should return a list of projects
-        // You can load projects from a database, API, or hardcoded data
-        return listOf(
-            Project("Project 1", "2023-01-01", "2023-06-01", "Kotlin", "Ongoing", "Content 1", email = email),
-            Project("Project 2", "2022-01-01", "2022-06-01", "Java", "Completed", "Content 2", email = email)
-        )
+        val jsonFile = File(filesDir, "projects.json")
+        return if (jsonFile.exists()) {
+            val json = jsonFile.readText()
+            val type = object : TypeToken<MutableList<Project>>() {}.type
+            Gson().fromJson(json, type)
+        } else {
+            loadJSONFromAsset().toMutableList()
+        }
+    }
+
+    private fun loadJSONFromAsset(): MutableList<Project> {
+        val json: String?
+        try {
+            val inputStream = assets.open("projects.json")
+            val size = inputStream.available()
+            val buffer = ByteArray(size)
+            inputStream.read(buffer)
+            inputStream.close()
+            json = String(buffer, Charset.forName("UTF-8"))
+        } catch (ex: IOException) {
+            ex.printStackTrace()
+            return mutableListOf()
+        }
+
+        val projectsList = mutableListOf<Project>()
+        val projectsArray = JSONArray(json)
+
+        for (i in 0 until projectsArray.length()) {
+            val project = projectsArray.getJSONObject(i)
+            val title = project.getString("title")
+            val startDate = project.getString("startDate")
+            val endDate = project.optString("endDate", null)
+            val language = project.getString("language")
+            val type = project.getString("type")
+            val contents = project.optString("contents", "")
+            val isLiked = project.optBoolean("isLiked", false)
+            val email = project.getString("email")
+            projectsList.add(Project(title, startDate, endDate, language, type, contents, isLiked, email = email))
+        }
+
+        return projectsList
     }
 }
