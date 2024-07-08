@@ -71,7 +71,7 @@ class MyLearningFragment : Fragment() {
         val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view_projects)
         recyclerView.layoutManager = LinearLayoutManager(context)
         projects = mutableListOf()
-        adapter = ProjectsAdapter(projects) { project: Project? -> // 명시적으로 Project? 타입을 지정
+        adapter = ProjectsAdapter(projects, { project: Project? -> // 명시적으로 Project? 타입을 지정
             if (project == null) {
                 showAddProjectDialog()
             } else {
@@ -81,7 +81,9 @@ class MyLearningFragment : Fragment() {
                 }
                 startActivity(intent)
             }
-        }
+        }, { project: Project ->
+            showEditProjectDialog(project)
+        })
         recyclerView.adapter = adapter
 
         // 서버로부터 프로젝트 데이터 가져오기
@@ -189,6 +191,99 @@ class MyLearningFragment : Fragment() {
                     loadProjectsFromServer()
                 } else {
                     Toast.makeText(context, "프로젝트 추가에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Toast.makeText(context, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun showEditProjectDialog(project: Project) {
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_add_project, null)
+        val dialog = AlertDialog.Builder(context)
+            .setTitle("Edit Project")
+            .setView(dialogView)
+            .setNegativeButton("Cancel", null)
+            .create()
+
+        val editTextTitle: EditText = dialogView.findViewById(R.id.edit_text_project_title)
+        val buttonStartDate: Button = dialogView.findViewById(R.id.button_start_date)
+        val buttonEndDate: Button = dialogView.findViewById(R.id.button_end_date)
+        val spinnerLanguage: Spinner = dialogView.findViewById(R.id.spinner_language)
+        val spinnerType: Spinner = dialogView.findViewById(R.id.spinner_type)
+        val buttonAddProject: Button = dialogView.findViewById(R.id.button_add_project)
+
+        // 스피너 설정
+        spinnerLanguage.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, languages)
+        spinnerType.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, types)
+
+        // 기존 프로젝트 정보 채우기
+        editTextTitle.setText(project.title)
+        buttonStartDate.text = project.start_d
+        buttonEndDate.text = project.end_d ?: "진행 중"
+        spinnerLanguage.setSelection(languages.indexOf(project.lang))
+        spinnerType.setSelection(types.indexOf(project.type))
+
+        // 날짜 선택기 설정
+        val calendar = Calendar.getInstance()
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+        var startDate: String? = project.start_d
+        var endDate: String? = project.end_d
+
+        buttonStartDate.setOnClickListener {
+            DatePickerDialog(requireContext(), { _, year, month, dayOfMonth ->
+                calendar.set(year, month, dayOfMonth)
+                startDate = dateFormat.format(calendar.time)
+                buttonStartDate.text = startDate
+            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+        }
+
+        buttonEndDate.setOnClickListener {
+            DatePickerDialog(requireContext(), { _, year, month, dayOfMonth ->
+                calendar.set(year, month, dayOfMonth)
+                endDate = dateFormat.format(calendar.time)
+                buttonEndDate.text = endDate
+            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+        }
+
+        // 프로젝트 수정 버튼 클릭 이벤트 설정
+        buttonAddProject.text = "Save"
+        buttonAddProject.setOnClickListener {
+            val title = editTextTitle.text.toString().trim()
+            val language = spinnerLanguage.selectedItem as String
+            val type = spinnerType.selectedItem as String
+
+            if (title.isNotEmpty() && startDate != null) {
+                val updatedProject = project.copy(
+                    title = title,
+                    start_d = startDate!!,
+                    end_d = endDate,
+                    lang = language,
+                    type = type
+                )
+                // 서버로 수정된 프로젝트 데이터 전송
+                updateProjectOnServer(updatedProject)
+                dialog.dismiss()
+            } else {
+                Toast.makeText(context, "Please fill in all required fields", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        dialog.show()
+    }
+
+    private fun updateProjectOnServer(project: Project) {
+        val apiService = RetrofitClient.instance.create(ApiService::class.java)
+        apiService.updateProject(project.proj_id, project).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    // 프로젝트 목록 갱신
+                    loadProjectsFromServer()
+                } else {
+                    Toast.makeText(context, "프로젝트 수정에 실패했습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
 

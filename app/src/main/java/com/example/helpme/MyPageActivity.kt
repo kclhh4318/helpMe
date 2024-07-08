@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.helpme.model.ProjectDetail
+import com.example.helpme.model.Project
 import com.example.helpme.network.ApiService
 import com.example.helpme.network.RetrofitClient
 import retrofit2.Call
@@ -20,7 +20,7 @@ class MyPageActivity : AppCompatActivity() {
     private lateinit var nickname: String
     private lateinit var email: String
     private lateinit var profileImage: String
-    private lateinit var projects: MutableList<ProjectDetail>
+    private lateinit var projects: MutableList<Project>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,8 +59,8 @@ class MyPageActivity : AppCompatActivity() {
 
     private fun loadProjectsFromServer(adapter: MyPageProjectAdapter) {
         val apiService = RetrofitClient.instance.create(ApiService::class.java)
-        apiService.getUserProjectDetails(email).enqueue(object : Callback<List<ProjectDetail>> {
-            override fun onResponse(call: Call<List<ProjectDetail>>, response: Response<List<ProjectDetail>>) {
+        apiService.getUserProjects(email).enqueue(object : Callback<List<Project>> {
+            override fun onResponse(call: Call<List<Project>>, response: Response<List<Project>>) {
                 if (response.isSuccessful) {
                     projects.clear()
                     response.body()?.let {
@@ -73,7 +73,7 @@ class MyPageActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<List<ProjectDetail>>, t: Throwable) {
+            override fun onFailure(call: Call<List<Project>>, t: Throwable) {
                 Toast.makeText(this@MyPageActivity, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
             }
         })

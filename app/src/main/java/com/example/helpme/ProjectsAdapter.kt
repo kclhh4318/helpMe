@@ -8,7 +8,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.helpme.model.Project
 
-class ProjectsAdapter(private val projects: List<Project>, private val onItemClicked: (Project?) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ProjectsAdapter(
+    private val projects: List<Project>,
+    private val onItemClicked: (Project?) -> Unit,
+    private val onItemLongClicked: (Project) -> Unit // 추가된 부분
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val VIEW_TYPE_ITEM = 0
     private val VIEW_TYPE_ADD = 1
@@ -16,6 +20,8 @@ class ProjectsAdapter(private val projects: List<Project>, private val onItemCli
     override fun getItemViewType(position: Int): Int {
         return if (position == projects.size) VIEW_TYPE_ADD else VIEW_TYPE_ITEM
     }
+
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == VIEW_TYPE_ITEM) {
@@ -37,7 +43,7 @@ class ProjectsAdapter(private val projects: List<Project>, private val onItemCli
         return projects.size + 1
     }
 
-    class ProjectViewHolder(itemView: View, private val onItemClicked: (Project?) -> Unit) : RecyclerView.ViewHolder(itemView) {
+    inner class ProjectViewHolder(itemView: View, private val onItemClicked: (Project?) -> Unit) : RecyclerView.ViewHolder(itemView) {
         private val iconFolder: ImageView = itemView.findViewById(R.id.icon_folder)
         private val titleTextView: TextView = itemView.findViewById(R.id.project_title)
         private val dateTextView: TextView = itemView.findViewById(R.id.project_date)
@@ -46,6 +52,15 @@ class ProjectsAdapter(private val projects: List<Project>, private val onItemCli
 
         fun bind(project: Project) {
             titleTextView.text = project.title
+
+            itemView.setOnClickListener{
+                onItemClicked(project)
+            }
+
+            itemView.setOnLongClickListener{
+                onItemLongClicked(project)
+                true
+            }
 
             val dateText = if (project.end_d == null) {
                 "${project.start_d} ~ 진행 중"
@@ -65,6 +80,8 @@ class ProjectsAdapter(private val projects: List<Project>, private val onItemCli
             }
         }
     }
+
+
 
     class AddProjectViewHolder(itemView: View, private val onItemClicked: (Project?) -> Unit) : RecyclerView.ViewHolder(itemView) {
         init {

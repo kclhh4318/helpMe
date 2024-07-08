@@ -24,7 +24,7 @@ interface ApiService {
     fun getProjectDetails(@Path("proj_id") projectId: Int): Call<ProjectDetail>
 
     @PUT("/projects/{proj_id}")
-    fun updateProject(@Path("proj_id") projectId: Int, @Body project: ProjectDetail): Call<Void>
+    fun updateProjectDetail(@Path("proj_id") projectId: Int, @Body project: ProjectDetail): Call<Void>
 
     @PUT("/projects/updateContents")
     fun updateProjectContents(@Body projectDetail: ProjectDetail): Call<Void>
@@ -32,6 +32,6 @@ interface ApiService {
     @GET("/projects")
     fun getAllProjects(): Call<List<ProjectDetail>>
 
-    @GET("/projects/user/{user_id}/details")
-    fun getUserProjectDetails(@Path("user_id") userId: String): Call<List<ProjectDetail>>
+    @PUT("/projects/editProject/{id}")
+    fun updateProject(@Path("id") id: Int, @Body project: Project): Call<Void>
 }

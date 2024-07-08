@@ -117,7 +117,7 @@ class ProjectDetailActivity : AppCompatActivity() {
 
     private fun updateProjectOnExit() {
         val apiService = RetrofitClient.instance.create(ApiService::class.java)
-        apiService.updateProject(projectDetail.proj_id, projectDetail).enqueue(object : Callback<Void> {
+        apiService.updateProjectDetail(projectDetail.proj_id, projectDetail).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (!response.isSuccessful) {
                     // 오류 처리

@@ -1,5 +1,9 @@
 package com.example.helpme.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class Project(
     var proj_id: Int,
     var title: String,
@@ -8,4 +12,4 @@ data class Project(
     var lang: String?,
     var type: String,
     var email: String
-)
+) : Parcelable

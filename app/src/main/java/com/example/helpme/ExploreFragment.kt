@@ -107,6 +107,9 @@ class ExploreFragment : Fragment() {
     }
 
     private fun filterProjects() {
+        if(!::projects.isInitialized){
+            projects = mutableListOf()
+        }
         val filteredProjects = projects.filter {
             (selectedLanguage == null || it.lang == selectedLanguage) &&
                     (selectedType == null || it.type == selectedType)

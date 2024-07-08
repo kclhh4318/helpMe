@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.helpme.model.ProjectDetail
+import com.example.helpme.model.Project
 
-class MyPageProjectAdapter(private val projectList: List<ProjectDetail>, private val currentUserEmail: String) : RecyclerView.Adapter<MyPageProjectAdapter.ProjectViewHolder>() {
+class MyPageProjectAdapter(private val projectList: List<Project>, private val currentUserEmail: String) : RecyclerView.Adapter<MyPageProjectAdapter.ProjectViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_project, parent, false)
