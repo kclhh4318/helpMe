@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.helpme.model.Project
 
 class ProjectsAdapter(private val projects: List<Project>, private val onItemClicked: (Project?) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -27,7 +28,7 @@ class ProjectsAdapter(private val projects: List<Project>, private val onItemCli
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is ProjectViewHolder) {
+        if (holder is ProjectViewHolder && position < projects.size) {
             holder.bind(projects[position])
         }
     }
@@ -46,14 +47,14 @@ class ProjectsAdapter(private val projects: List<Project>, private val onItemCli
         fun bind(project: Project) {
             titleTextView.text = project.title
 
-            val dateText = if (project.endDate == null) {
-                "${project.startDate} ~ 진행 중"
+            val dateText = if (project.end_d == null) {
+                "${project.start_d} ~ 진행 중"
             } else {
-                "${project.startDate} ~ ${project.endDate}"
+                "${project.start_d} ~ ${project.end_d}"
             }
             dateTextView.text = dateText
 
-            languageTextView.text = project.language
+            languageTextView.text = project.lang ?: "언어 미정"
             typeTextView.text = project.type
 
             // 폴더 아이콘 설정 (이미지가 이미 추가된 상태여야 합니다)

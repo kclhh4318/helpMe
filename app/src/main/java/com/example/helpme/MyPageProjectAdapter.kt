@@ -7,8 +7,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.helpme.model.ProjectDetail
 
-class MyPageProjectAdapter(private val projectList: List<Project>, private val currentUserEmail: String) : RecyclerView.Adapter<MyPageProjectAdapter.ProjectViewHolder>() {
+class MyPageProjectAdapter(private val projectList: List<ProjectDetail>, private val currentUserEmail: String) : RecyclerView.Adapter<MyPageProjectAdapter.ProjectViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_project, parent, false)
@@ -18,12 +19,12 @@ class MyPageProjectAdapter(private val projectList: List<Project>, private val c
     override fun onBindViewHolder(holder: ProjectViewHolder, position: Int) {
         val project = projectList[position]
         holder.titleTextView.text = project.title
-        holder.dateTextView.text = if (project.endDate != null) {
-            "${project.startDate} - ${project.endDate}"
+        holder.dateTextView.text = if (project.end_d != null) {
+            "${project.start_d} - ${project.end_d}"
         } else {
-            "${project.startDate} - Ongoing"
+            "${project.start_d} - 진행 중"
         }
-        holder.languageTextView.text = project.language
+        holder.languageTextView.text = project.lang
         holder.typeTextView.text = project.type
 
         // Set click listener

@@ -3,23 +3,24 @@ package com.example.helpme
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import org.json.JSONArray
-import java.io.File
-import java.io.IOException
-import java.nio.charset.Charset
+import com.example.helpme.model.ProjectDetail
+import com.example.helpme.network.ApiService
+import com.example.helpme.network.RetrofitClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MyPageActivity : AppCompatActivity() {
 
     private lateinit var nickname: String
     private lateinit var email: String
     private lateinit var profileImage: String
-    private lateinit var projects: MutableList<Project>
+    private lateinit var projects: MutableList<ProjectDetail>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,11 +29,6 @@ class MyPageActivity : AppCompatActivity() {
         nickname = intent.getStringExtra("nickname") ?: "No Nickname"
         email = intent.getStringExtra("email") ?: "No Email"
         profileImage = intent.getStringExtra("profile_image") ?: ""
-
-        projects = loadProjects()
-            .filter { it.email == email }
-            .sortedBy { it.startDate }
-            .toMutableList()
 
         // Initialize Views
         val profileImageView = findViewById<ImageView>(R.id.profile_image)
@@ -48,7 +44,12 @@ class MyPageActivity : AppCompatActivity() {
 
         // Set RecyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = MyPageProjectAdapter(projects, email)
+        projects = mutableListOf()
+        val adapter = MyPageProjectAdapter(projects, email)
+        recyclerView.adapter = adapter
+
+        // Load projects from server
+        loadProjectsFromServer(adapter)
 
         // Exit functionality
         exitIcon.setOnClickListener {
@@ -56,47 +57,25 @@ class MyPageActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadProjects(): List<Project> {
-        val jsonFile = File(filesDir, "projects.json")
-        return if (jsonFile.exists()) {
-            val json = jsonFile.readText()
-            val type = object : TypeToken<MutableList<Project>>() {}.type
-            Gson().fromJson(json, type)
-        } else {
-            loadJSONFromAsset().toMutableList()
-        }
-    }
+    private fun loadProjectsFromServer(adapter: MyPageProjectAdapter) {
+        val apiService = RetrofitClient.instance.create(ApiService::class.java)
+        apiService.getUserProjectDetails(email).enqueue(object : Callback<List<ProjectDetail>> {
+            override fun onResponse(call: Call<List<ProjectDetail>>, response: Response<List<ProjectDetail>>) {
+                if (response.isSuccessful) {
+                    projects.clear()
+                    response.body()?.let {
+                        projects.addAll(it)
+                    }
+                    projects.sortBy { it.start_d }
+                    adapter.notifyDataSetChanged()
+                } else {
+                    Toast.makeText(this@MyPageActivity, "프로젝트를 불러오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
 
-    private fun loadJSONFromAsset(): MutableList<Project> {
-        val json: String?
-        try {
-            val inputStream = assets.open("projects.json")
-            val size = inputStream.available()
-            val buffer = ByteArray(size)
-            inputStream.read(buffer)
-            inputStream.close()
-            json = String(buffer, Charset.forName("UTF-8"))
-        } catch (ex: IOException) {
-            ex.printStackTrace()
-            return mutableListOf()
-        }
-
-        val projectsList = mutableListOf<Project>()
-        val projectsArray = JSONArray(json)
-
-        for (i in 0 until projectsArray.length()) {
-            val project = projectsArray.getJSONObject(i)
-            val title = project.getString("title")
-            val startDate = project.getString("startDate")
-            val endDate = project.optString("endDate", null)
-            val language = project.getString("language")
-            val type = project.getString("type")
-            val contents = project.optString("contents", "")
-            val isLiked = project.optBoolean("isLiked", false)
-            val email = project.getString("email")
-            projectsList.add(Project(title, startDate, endDate, language, type, contents, isLiked, email = email))
-        }
-
-        return projectsList
+            override fun onFailure(call: Call<List<ProjectDetail>>, t: Throwable) {
+                Toast.makeText(this@MyPageActivity, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }

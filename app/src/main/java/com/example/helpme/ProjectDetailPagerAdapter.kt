@@ -3,21 +3,27 @@ package com.example.helpme
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import com.example.helpme.model.ProjectDetail
 
-class ProjectDetailPagerAdapter(fm: FragmentManager, private val project: Project) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
-
-    private val tabTitles = arrayOf("CONTENTS", "REFERENCE", "REMEMBER")
+class ProjectDetailPagerAdapter(fm: FragmentManager, private val project: ProjectDetail) : FragmentPagerAdapter(fm) {
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> ContentsFragment.newInstance(project)
-            1 -> ReferenceFragment.newInstance(project)
-            2 -> RememberFragment.newInstance(project)
-            else -> throw IllegalStateException("Unexpected position $position")
+            1 -> RememberFragment.newInstance(project)
+            2 -> ReferenceFragment.newInstance(project)
+            else -> ContentsFragment.newInstance(project)
         }
     }
 
-    override fun getCount(): Int = tabTitles.size
+    override fun getCount(): Int = 3
 
-    override fun getPageTitle(position: Int): CharSequence? = tabTitles[position]
+    override fun getPageTitle(position: Int): CharSequence? {
+        return when (position) {
+            0 -> "Contents"
+            1 -> "Remember"
+            2 -> "Reference"
+            else -> null
+        }
+    }
 }

@@ -1,18 +1,28 @@
 package com.example.helpme
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import com.example.helpme.databinding.FragmentContentsBinding
+import com.example.helpme.model.ProjectDetail
+import com.example.helpme.network.ApiService
+import com.example.helpme.network.RetrofitClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class ContentsFragment : Fragment() {
 
     private lateinit var binding: FragmentContentsBinding
-    private lateinit var project: Project
+    private lateinit var project: ProjectDetail
+    private var isEditing = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,7 +36,12 @@ class ContentsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         project = arguments?.getParcelable("project")!!
 
+        binding.contentsTextView.text = project.contents
         binding.contentsEditText.setText(project.contents)
+
+        binding.contentsTextView.setOnClickListener {
+            toggleEditMode(true)
+        }
 
         binding.contentsEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -35,10 +50,50 @@ class ContentsFragment : Fragment() {
                 project.contents = s.toString()
             }
         })
+
+        binding.contentsEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                toggleEditMode(false)
+            }
+        }
+    }
+
+    private fun toggleEditMode(edit: Boolean) {
+        isEditing = edit
+        if (edit) {
+            binding.contentsTextView.visibility = View.GONE
+            binding.contentsEditText.visibility = View.VISIBLE
+            binding.contentsEditText.requestFocus()
+            val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(binding.contentsEditText, InputMethodManager.SHOW_IMPLICIT)
+        } else {
+            binding.contentsTextView.visibility = View.VISIBLE
+            binding.contentsEditText.visibility = View.GONE
+            binding.contentsTextView.text = binding.contentsEditText.text.toString()
+            project.contents = binding.contentsEditText.text.toString()
+            updateProjectContents()
+            val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(binding.contentsEditText.windowToken, 0)
+        }
+    }
+
+    private fun updateProjectContents() {
+        val apiService = RetrofitClient.instance.create(ApiService::class.java)
+        apiService.updateProjectContents(project).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (!response.isSuccessful) {
+                    // 오류 처리
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                // 오류 처리
+            }
+        })
     }
 
     companion object {
-        fun newInstance(project: Project): ContentsFragment {
+        fun newInstance(project: ProjectDetail): ContentsFragment {
             val fragment = ContentsFragment()
             val args = Bundle()
             args.putParcelable("project", project)

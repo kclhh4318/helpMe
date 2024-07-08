@@ -1,14 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <EditText
-        android:id="@+id/contentsEditText"
+    <data>
+        <!-- 필요한 데이터 바인딩 변수 선언 -->
+    </data>
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:hint="Enter contents here"
-        android:padding="16dp"
-        android:gravity="top"
-        android:inputType="textMultiLine" />
-</FrameLayout>
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/contentsTextView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp"
+            android:gravity="top"
+            android:textSize="16sp"
+            android:visibility="visible"
+            android:background="#f0f0f0" />
+
+        <EditText
+            android:id="@+id/contentsEditText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="Enter contents here"
+            android:padding="16dp"
+            android:gravity="top"
+            android:inputType="textMultiLine"
+            android:visibility="gone" />
+    </FrameLayout>
+</layout>

@@ -2,10 +2,9 @@ package com.example.helpme
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,27 +13,22 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import org.json.JSONArray
-import org.json.JSONObject
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.nio.charset.Charset
+import com.example.helpme.model.Project
+import com.example.helpme.network.ApiService
+import com.example.helpme.network.RetrofitClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 
 class MyLearningFragment : Fragment() {
-
-    private var currentUserEmail: String = ""
 
     private lateinit var nickname: String
     private lateinit var email: String
     private lateinit var profileImage: String
     private lateinit var projects: MutableList<Project>
     private lateinit var adapter: ProjectsAdapter
-    private lateinit var sharedPreferences: SharedPreferences
 
     private val languages = arrayOf("Python", "Java", "Kotlin", "C++", "JavaScript")
     private val types = arrayOf("Machine Learning", "Web Development", "Mobile Development", "Blockchain", "Game Development")
@@ -45,21 +39,10 @@ class MyLearningFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_my_learning, container, false)
 
-        sharedPreferences = requireActivity().getSharedPreferences("projects_pref", Context.MODE_PRIVATE)
-
         val activity = activity as MainActivity
         nickname = activity.intent.getStringExtra("nickname") ?: "No Nickname"
         email = activity.intent.getStringExtra("email") ?: "No Email"
         profileImage = activity.intent.getStringExtra("profile_image") ?: ""
-
-        // JSON 데이터 로드
-        projects = loadProjects()
-            .filter { it.email == email && it.endDate == null }
-            .toMutableList()
-
-        // 가장 많이 사용하는 언어와 개발 타입
-        val mostUsedLanguage = projects.groupBy { it.language }.maxByOrNull { it.value.size }?.key ?: "N/A"
-        val mostUsedType = projects.groupBy { it.type }.maxByOrNull { it.value.size }?.key ?: "N/A"
 
         // 프로필 설정
         val profileSection: LinearLayout = view.findViewById(R.id.profile_section)
@@ -68,7 +51,7 @@ class MyLearningFragment : Fragment() {
         val mostUsedTextView: TextView = view.findViewById(R.id.text_most_used)
 
         nicknameTextView.text = "$nickname 님, 어서오세요!"
-        mostUsedTextView.text = "$mostUsedLanguage, $mostUsedType\n가장 열심히 공부하고 있어요!"
+        mostUsedTextView.text = "가장 열심히 공부하고 있어요!"
         Glide.with(this)
             .load(profileImage)
             .placeholder(R.drawable.ic_profile_placeholder)
@@ -87,20 +70,45 @@ class MyLearningFragment : Fragment() {
         // 리사이클러뷰 설정
         val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view_projects)
         recyclerView.layoutManager = LinearLayoutManager(context)
-        adapter = ProjectsAdapter(projects) { project ->
+        projects = mutableListOf()
+        adapter = ProjectsAdapter(projects) { project: Project? -> // 명시적으로 Project? 타입을 지정
             if (project == null) {
                 showAddProjectDialog()
             } else {
                 val intent = Intent(activity, ProjectDetailActivity::class.java).apply {
-                    putExtra("project", project)
-                    putExtra("currentUserEmail", currentUserEmail)
+                    putExtra("project", project as Parcelable) // 명시적으로 Parcelable로 캐스팅
+                    putExtra("currentUserEmail", email)
                 }
                 startActivity(intent)
             }
         }
         recyclerView.adapter = adapter
 
+        // 서버로부터 프로젝트 데이터 가져오기
+        loadProjectsFromServer()
+
         return view
+    }
+
+    private fun loadProjectsFromServer() {
+        val apiService = RetrofitClient.instance.create(ApiService::class.java)
+        apiService.getUserProjects(email).enqueue(object : Callback<List<Project>> {
+            override fun onResponse(call: Call<List<Project>>, response: Response<List<Project>>) {
+                if (response.isSuccessful) {
+                    projects.clear()
+                    response.body()?.let {
+                        projects.addAll(it)
+                    }
+                    adapter.notifyDataSetChanged()
+                } else {
+                    Toast.makeText(context, "프로젝트를 불러오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<Project>>, t: Throwable) {
+                Toast.makeText(context, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     private fun showAddProjectDialog() {
@@ -153,18 +161,16 @@ class MyLearningFragment : Fragment() {
 
             if (title.isNotEmpty() && startDate != null) {
                 val newProject = Project(
+                    proj_id = 0, // 새 프로젝트의 경우, 서버에서 자동으로 ID가 할당될 것입니다.
                     title = title,
-                    startDate = startDate!!,
-                    endDate = null,
-                    language = language,
+                    start_d = startDate!!,
+                    end_d = endDate,
+                    lang = language,
                     type = type,
-                    contents = "",
-                    isLiked = false,
                     email = email
                 )
-                projects.add(newProject)
-                adapter.notifyItemInserted(projects.size - 1)
-                saveProjects()
+                // 서버로 새로운 프로젝트 데이터 전송
+                addProjectToServer(newProject)
                 dialog.dismiss()
             } else {
                 Toast.makeText(context, "Please fill in all required fields", Toast.LENGTH_SHORT).show()
@@ -174,77 +180,21 @@ class MyLearningFragment : Fragment() {
         dialog.show()
     }
 
-    private fun loadProjects(): MutableList<Project> {
-        val jsonFile = File(requireContext().filesDir, "projects.json")
-        return if (jsonFile.exists()) {
-            val json = jsonFile.readText()
-            val type = object : TypeToken<MutableList<Project>>() {}.type
-            Gson().fromJson(json, type)
-        } else {
-            loadJSONFromAsset().toMutableList()
-        }
-    }
+    private fun addProjectToServer(newProject: Project) {
+        val apiService = RetrofitClient.instance.create(ApiService::class.java)
+        apiService.createProject(newProject).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    // 프로젝트 목록 갱신
+                    loadProjectsFromServer()
+                } else {
+                    Toast.makeText(context, "프로젝트 추가에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
 
-    private fun saveProjects() {
-        saveJSONToAsset(projects)
-    }
-
-    private fun loadJSONFromAsset(): MutableList<Project> {
-        val json: String?
-        try {
-            val inputStream = context?.assets?.open("projects.json")
-            val size = inputStream?.available()
-            val buffer = ByteArray(size!!)
-            inputStream.read(buffer)
-            inputStream.close()
-            json = String(buffer, Charset.forName("UTF-8"))
-        } catch (ex: IOException) {
-            ex.printStackTrace()
-            return mutableListOf()
-        }
-
-        val projectsList = mutableListOf<Project>()
-        val projectsArray = JSONArray(json)
-
-        for (i in 0 until projectsArray.length()) {
-            val project = projectsArray.getJSONObject(i)
-            val title = project.getString("title")
-            val startDate = project.getString("startDate")
-            val endDate = project.optString("endDate", null)
-            val language = project.getString("language")
-            val type = project.getString("type")
-            val contents = project.optString("contents", "")
-            val isLiked = project.optBoolean("isLiked", false)
-            val email = project.getString("email")
-            projectsList.add(Project(title, startDate, endDate, language, type, contents, isLiked, email = email))
-        }
-
-        return projectsList
-    }
-
-    private fun saveJSONToAsset(projects: MutableList<Project>) {
-        val projectsArray = JSONArray()
-
-        for (project in projects) {
-            val projectObject = JSONObject()
-            projectObject.put("title", project.title)
-            projectObject.put("startDate", project.startDate)
-            projectObject.put("endDate", project.endDate)
-            projectObject.put("language", project.language)
-            projectObject.put("type", project.type)
-            projectObject.put("contents", project.contents)
-            projectObject.put("isLiked", project.isLiked)
-            projectObject.put("email", project.email)
-            projectsArray.put(projectObject)
-        }
-
-        val jsonString = projectsArray.toString()
-        try {
-            val outputStream: FileOutputStream = requireContext().openFileOutput("projects.json", Context.MODE_PRIVATE)
-            outputStream.write(jsonString.toByteArray())
-            outputStream.close()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Toast.makeText(context, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }
