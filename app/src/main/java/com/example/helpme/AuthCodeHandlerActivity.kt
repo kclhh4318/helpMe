@@ -75,24 +75,28 @@ class AuthCodeHandlerActivity : AppCompatActivity() {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     Log.d(TAG, "서버에 사용자 정보 저장 성공")
-                    // POST 요청 성공 후 MainActivity로 이동
-                    val intent = Intent(this@AuthCodeHandlerActivity, MainActivity::class.java).apply {
-                        putExtra("nickname", user.kakaoAccount?.profile?.nickname)
-                        putExtra("email", user.kakaoAccount?.email)
-                        putExtra("profile_image", user.kakaoAccount?.profile?.thumbnailImageUrl)
-                    }
-                    startActivity(intent)
-                    finish()
                 } else {
                     Log.e(TAG, "서버에 사용자 정보 저장 실패: ${response.code()}")
-                    // 실패 시 처리 (예: 사용자에게 알림)
                 }
+                // regardless of success or failure, proceed to MainActivity
+                proceedToMainActivity(user)
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
                 Log.e(TAG, "서버 요청 실패: ${t.message}")
-                // 네트워크 오류 등의 실패 처리 (예: 사용자에게 알림)
+                // regardless of success or failure, proceed to MainActivity
+                proceedToMainActivity(user)
             }
         })
+    }
+
+    private fun proceedToMainActivity(user: com.kakao.sdk.user.model.User) {
+        val intent = Intent(this@AuthCodeHandlerActivity, MainActivity::class.java).apply {
+            putExtra("nickname", user.kakaoAccount?.profile?.nickname)
+            putExtra("email", user.kakaoAccount?.email)
+            putExtra("profile_image", user.kakaoAccount?.profile?.thumbnailImageUrl)
+        }
+        startActivity(intent)
+        finish()
     }
 }

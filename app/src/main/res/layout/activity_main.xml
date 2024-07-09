@@ -20,8 +20,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:colorBackground="@color/blockBackground"
+        android:layout_marginBottom="0dp"
         android:background="@drawable/bottom_nav_background"
         app:menu="@menu/bottom_nav_menu" />
+
 
 </RelativeLayout>

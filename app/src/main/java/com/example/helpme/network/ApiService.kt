@@ -36,13 +36,14 @@ interface ApiService {
     @POST("/updateprojdetail/{proj_id}")
     fun updateProjectDetail(@Path("proj_id") projectId: Int, @Body project: ProjectDetail): Call<Void>
 
-    //@PUT("/projects/updateContents")
-    //fun updateProjectContents(@Body projectDetail: ProjectDetail): Call<Void>
+    //프로젝트 업데이트
+    @PUT("/updateproj/{proj_id}")
+    fun updateProject(@Path("proj_id") id: Int, @Body project: Project): Call<Void>
 
     //전달값이 없으므로 @Query를 작성할 필요가 없다.
     @GET("/orderbylikes")
     fun getAllProjects(): Call<List<ProjectDetail>>
 
-    @PUT("/projects/editProject/{id}")
-    fun updateProject(@Path("id") id: Int, @Body project: Project): Call<Void>
+    //@PUT("/updateproj/{proj_id}")
+    //fun updateProject(@Path("proj_id") projectId: Int, @Body projectDetail: Project): Call<Void>
 }

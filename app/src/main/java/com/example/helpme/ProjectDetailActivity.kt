@@ -1,6 +1,5 @@
 package com.example.helpme
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -11,7 +10,6 @@ import com.example.helpme.network.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.Serializable
 
 class ProjectDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProjectDetailBinding
@@ -46,7 +44,12 @@ class ProjectDetailActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     response.body()?.let {
                         projectDetail = it
-                        setupUI()
+                        if (projectDetail.start_d == null) {
+                            Toast.makeText(this@ProjectDetailActivity, "Project start date is missing", Toast.LENGTH_SHORT).show()
+                            finish()
+                        } else {
+                            setupUI()
+                        }
                     } ?: run {
                         Toast.makeText(this@ProjectDetailActivity, "No project details found", Toast.LENGTH_SHORT).show()
                         finish()

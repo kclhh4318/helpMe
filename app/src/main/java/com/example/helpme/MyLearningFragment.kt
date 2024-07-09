@@ -71,7 +71,7 @@ class MyLearningFragment : Fragment() {
         val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view_projects)
         recyclerView.layoutManager = LinearLayoutManager(context)
         projects = mutableListOf()
-        adapter = ProjectsAdapter(projects, { project: Project? -> // 명시적으로 Project? 타입을 지정
+        adapter = ProjectsAdapter(projects, { project: Project? ->
             if (project == null) {
                 showAddProjectDialog()
             } else {

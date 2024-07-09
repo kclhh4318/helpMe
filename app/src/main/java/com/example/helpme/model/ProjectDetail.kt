@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 data class ProjectDetail(
     val proj_id: Int,
     val title: String,
-    var start_d: String,
+    var start_d: String?,
     var end_d: String?,
     var lang: String?,
     var type: String,
