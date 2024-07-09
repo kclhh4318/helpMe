@@ -10,8 +10,8 @@ class ProjectDetailPagerAdapter(fm: FragmentManager, private val project: Projec
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> ContentsFragment.newInstance(project)
-            1 -> RememberFragment.newInstance(project)
-            2 -> ReferenceFragment.newInstance(project)
+            1 -> ReferenceFragment.newInstance(project)
+            2 -> RememberFragment.newInstance(project)
             else -> ContentsFragment.newInstance(project)
         }
     }
@@ -21,8 +21,8 @@ class ProjectDetailPagerAdapter(fm: FragmentManager, private val project: Projec
     override fun getPageTitle(position: Int): CharSequence? {
         return when (position) {
             0 -> "Contents"
-            1 -> "Remember"
-            2 -> "Reference"
+            1 -> "Reference"
+            2 -> "Remember"
             else -> null
         }
     }

@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -71,11 +70,12 @@ class RememberFragment : Fragment() {
             binding.rememberEditText.visibility = View.GONE
             binding.rememberTextView.text = binding.rememberEditText.text.toString()
             project.remember = binding.rememberEditText.text.toString()
-            //updateProjectContents()
+            // updateProjectContents()
             val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(binding.rememberEditText.windowToken, 0)
         }
     }
+
     /*
     private fun updateProjectContents() {
         val apiService = RetrofitClient.instance.create(ApiService::class.java)
@@ -91,7 +91,8 @@ class RememberFragment : Fragment() {
             }
         })
     }
-*/
+    */
+
     companion object {
         fun newInstance(project: ProjectDetail): RememberFragment {
             val fragment = RememberFragment()

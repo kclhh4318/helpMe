@@ -10,4 +10,10 @@
         <item name="android:windowBackground">@color/windowBackground</item>
     </style>
 
+    <style name="RoundedButtonStyle">
+        <item name="android:background">@drawable/block_background</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:layout_margin">8dp</item>
+    </style>
+
 </resources>
