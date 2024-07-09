@@ -24,7 +24,7 @@ class MyPageProjectAdapter(private val projectList: List<Project>, private val c
         } else {
             "${project.start_d} - 진행 중"
         }
-        holder.languageTextView.text = project.lang
+        holder.languageTextView.text = project.lan
         holder.typeTextView.text = project.type
 
         // Set click listener

@@ -9,12 +9,12 @@ data class ProjectDetail(
     val title: String,
     var start_d: String?,
     var end_d: String?,
-    var lang: String?,
-    var type: String,
-    var email: String,
-    var contents: String,
-    var remember: String,
-    var ref: String,
+    var lan: String?,
+    var type: String?,
+    var email: String?,
+    var contents: String?,
+    var remember: String?,
+    var ref: String?,
     var isLiked: Boolean,
     var likes: Int
 ) : Parcelable

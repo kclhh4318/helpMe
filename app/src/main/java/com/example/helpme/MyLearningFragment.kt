@@ -78,6 +78,11 @@ class MyLearningFragment : Fragment() {
                 val intent = Intent(activity, ProjectDetailActivity::class.java).apply {
                     putExtra("proj_id", project.proj_id)
                     putExtra("currentUserEmail", email)
+                    putExtra("title", project.title)
+                    putExtra("start_d", project.start_d)
+                    putExtra("end_d", project.end_d)
+                    putExtra("lan", project.lan)
+                    putExtra("type", project.type)
                 }
                 startActivity(intent)
             }
@@ -98,9 +103,11 @@ class MyLearningFragment : Fragment() {
             override fun onResponse(call: Call<List<Project>>, response: Response<List<Project>>) {
                 if (response.isSuccessful) {
                     projects.clear()
+                    Log.d("API_RESPONSE", "Raw JSON: ${response.body()}")
                     Log.d("API_CALL", "프로젝트 데이터 불러오기 성공")
                     response.body()?.let {
                         projects.addAll(it)
+                        Log.d("API_CALL", "받아온 프로젝트 데이터: ${it.joinToString("\n")}")
                     }
                     adapter.notifyDataSetChanged()
                 } else {
@@ -169,7 +176,7 @@ class MyLearningFragment : Fragment() {
                     title = title,
                     start_d = startDate!!,
                     end_d = endDate,
-                    lang = language,
+                    lan = language,
                     type = type,
                     email = email
                 )
@@ -189,7 +196,7 @@ class MyLearningFragment : Fragment() {
         apiService.createProject(newProject).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    // 프로젝트 목록 갱신
+                    // 서버에서 프로젝트 목록을 다시 불러오는 대신 로컬 리스트에 추가하고 Adapter에 알림
                     loadProjectsFromServer()
                 } else {
                     Toast.makeText(context, "프로젝트 추가에 실패했습니다.", Toast.LENGTH_SHORT).show()
@@ -225,7 +232,7 @@ class MyLearningFragment : Fragment() {
         editTextTitle.setText(project.title)
         buttonStartDate.text = project.start_d
         buttonEndDate.text = project.end_d ?: "진행 중"
-        spinnerLanguage.setSelection(languages.indexOf(project.lang))
+        spinnerLanguage.setSelection(languages.indexOf(project.lan))
         spinnerType.setSelection(types.indexOf(project.type))
 
         // 날짜 선택기 설정
@@ -263,7 +270,7 @@ class MyLearningFragment : Fragment() {
                     title = title,
                     start_d = startDate!!,
                     end_d = endDate,
-                    lang = language,
+                    lan = language,
                     type = type
                 )
                 // 서버로 수정된 프로젝트 데이터 전송
@@ -282,7 +289,7 @@ class MyLearningFragment : Fragment() {
         apiService.updateProject(project.proj_id, project).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    // 프로젝트 목록 갱신
+                    // 서버에서 프로젝트 목록을 다시 불러오는 대신 로컬 리스트에서 수정하고 Adapter에 알림
                     loadProjectsFromServer()
                 } else {
                     Toast.makeText(context, "프로젝트 수정에 실패했습니다.", Toast.LENGTH_SHORT).show()

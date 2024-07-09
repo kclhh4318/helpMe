@@ -9,7 +9,7 @@ data class Project(
     var title: String,
     var start_d: String?,
     var end_d: String?,
-    var lang: String?,
+    var lan: String? = null,
     var type: String,
     var email: String
 ) : Parcelable

@@ -44,7 +44,7 @@ class ExploreFragment : Fragment() {
         adapter = ProjectsAdapter2(requireContext(), mutableListOf()) { project ->
             project?.let {
                 val intent = Intent(activity, ProjectDetailActivity::class.java).apply {
-                    putExtra("project", it)
+                    putExtra("proj_id", it.proj_id)
                     putExtra("currentUserEmail", currentUserEmail)
                 }
                 startActivityForResult(intent, REQUEST_CODE_PROJECT_DETAIL)
@@ -107,11 +107,11 @@ class ExploreFragment : Fragment() {
     }
 
     private fun filterProjects() {
-        if(!::projects.isInitialized){
+        if (!::projects.isInitialized) {
             projects = mutableListOf()
         }
         val filteredProjects = projects.filter {
-            (selectedLanguage == null || it.lang == selectedLanguage) &&
+            (selectedLanguage == null || it.lan == selectedLanguage) &&
                     (selectedType == null || it.type == selectedType)
         }
         adapter.updateProjects(filteredProjects)

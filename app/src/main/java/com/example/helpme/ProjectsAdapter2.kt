@@ -37,7 +37,7 @@ class ProjectsAdapter2(
         } else {
             "${project.start_d} - 진행 중"
         }
-        holder.languageTextView.text = project.lang
+        holder.languageTextView.text = project.lan
         holder.typeTextView.text = project.type
         holder.likesTextView.text = project.likes.toString()
 
