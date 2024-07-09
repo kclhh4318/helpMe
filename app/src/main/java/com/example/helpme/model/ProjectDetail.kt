@@ -15,6 +15,5 @@ data class ProjectDetail(
     var contents: String?,
     var remember: String?,
     var ref: String?,
-    var isLiked: Boolean,
-    var likes: Int
+    var likes: Boolean?,
 ) : Parcelable

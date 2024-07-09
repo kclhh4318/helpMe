@@ -77,7 +77,7 @@ class ExploreFragment : Fragment() {
 
         languageButtons.forEachIndexed { index, button ->
             button.setOnClickListener {
-                val language = languages[index]
+                val language = languages[index].uppercase()
                 if (selectedLanguage == language) {
                     selectedLanguage = null
                     button.setTypeface(null, android.graphics.Typeface.NORMAL)
@@ -92,7 +92,7 @@ class ExploreFragment : Fragment() {
 
         typeButtons.forEachIndexed { index, button ->
             button.setOnClickListener {
-                val type = types[index]
+                val type = types[index].uppercase()
                 if (selectedType == type) {
                     selectedType = null
                     button.setTypeface(null, android.graphics.Typeface.NORMAL)
@@ -110,9 +110,9 @@ class ExploreFragment : Fragment() {
         if (!::projects.isInitialized) {
             projects = mutableListOf()
         }
-        val filteredProjects = projects.filter {
-            (selectedLanguage == null || it.lan == selectedLanguage) &&
-                    (selectedType == null || it.type == selectedType)
+        val filteredProjects = projects.filter { project ->
+            (selectedLanguage == null || project.lan?.equals(selectedLanguage, ignoreCase = true) == true) &&
+                    (selectedType == null || project.type?.replace(" ", "")?.equals(selectedType?.replace(" ", ""), ignoreCase = true) == true)
         }
         adapter.updateProjects(filteredProjects)
     }
@@ -122,7 +122,7 @@ class ExploreFragment : Fragment() {
         apiService.getAllProjects().enqueue(object : Callback<List<ProjectDetail>> {
             override fun onResponse(call: Call<List<ProjectDetail>>, response: Response<List<ProjectDetail>>) {
                 if (response.isSuccessful) {
-                    projects = response.body()?.sortedByDescending { it.likes }?.toMutableList() ?: mutableListOf()
+                    projects = response.body()?.sortedByDescending { it.likes ?: false }?.toMutableList() ?: mutableListOf()
                     adapter.updateProjects(projects)
                 } else {
                     Toast.makeText(context, "프로젝트를 불러오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()

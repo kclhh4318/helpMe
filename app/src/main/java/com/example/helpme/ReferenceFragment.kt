@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -71,17 +70,16 @@ class ReferenceFragment : Fragment() {
             binding.referenceEditText.visibility = View.GONE
             binding.referenceTextView.text = binding.referenceEditText.text.toString()
             project.ref = binding.referenceEditText.text.toString()
-            //updateProjectContents()
+            // updateProjectReference()
             val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(binding.referenceEditText.windowToken, 0)
         }
     }
 
     /*
-
-    private fun updateProjectContents() {
+    private fun updateProjectReference() {
         val apiService = RetrofitClient.instance.create(ApiService::class.java)
-        apiService.updateProjectContents(project).enqueue(object : Callback<Void> {
+        apiService.updateProjectReference(project).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (!response.isSuccessful) {
                     // 오류 처리
@@ -93,8 +91,7 @@ class ReferenceFragment : Fragment() {
             }
         })
     }
-
-     */
+    */
 
     companion object {
         fun newInstance(project: ProjectDetail): ReferenceFragment {

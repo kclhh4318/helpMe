@@ -8,6 +8,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.helpme.model.ProjectDetail
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class ProjectsAdapter2(
     private val context: Context,
@@ -32,13 +34,32 @@ class ProjectsAdapter2(
     override fun onBindViewHolder(holder: ProjectViewHolder, position: Int) {
         val project = projects[position]
         holder.titleTextView.text = project.title
-        holder.datesTextView.text = if (project.end_d != null) {
-            "${project.start_d} - ${project.end_d}"
-        } else {
-            "${project.start_d} - 진행 중"
-        }
-        holder.languageTextView.text = project.lan
-        holder.typeTextView.text = project.type
+
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+        val startDate = project.start_d?.let {
+            try {
+                val date = inputFormat.parse(it)
+                outputFormat.format(date)
+            } catch (e: Exception) {
+                it // 파싱 실패 시 원본 문자열 반환
+            }
+        } ?: "날짜 미정"
+
+        val endDate = project.end_d?.let {
+            try {
+                val date = inputFormat.parse(it)
+                outputFormat.format(date)
+            } catch (e: Exception) {
+                it // 파싱 실패 시 원본 문자열 반환
+            }
+        } ?: "진행 중"
+
+        holder.datesTextView.text = "$startDate - $endDate"
+
+        holder.languageTextView.text = project.lan ?: "언어 미정"
+        holder.typeTextView.text = project.type ?: "타입 미정"
         holder.likesTextView.text = project.likes.toString()
 
         holder.likeImageView.setImageResource(R.drawable.ic_heart_on)

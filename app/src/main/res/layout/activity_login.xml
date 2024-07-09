@@ -8,9 +8,9 @@
 
     <Button
         android:id="@+id/kakao_login_button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="324dp"
+        android:layout_width="297dp"
+        android:layout_height="509dp"
+        android:layout_marginBottom="92dp"
         android:background="@drawable/login_button"
         android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"

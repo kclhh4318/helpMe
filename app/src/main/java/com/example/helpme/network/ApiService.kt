@@ -3,6 +3,7 @@ package com.example.helpme.network
 import com.example.helpme.model.Project
 import com.example.helpme.model.ProjectDetail
 import com.example.helpme.model.User
+import com.example.helpme.model.ProjectId
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -24,6 +25,9 @@ interface ApiService {
     @POST("/newproj")
     fun createProject(@Body newProject: Project): Call<Void>
 
+    @POST("/idin")
+    fun createProjectIn(@Body projectId: ProjectId): Call<Void>
+
     @POST("/detailin")
     fun createProjectDetail(@Body newProjectDetail: ProjectDetail): Call<Void>
 
@@ -32,7 +36,7 @@ interface ApiService {
     fun getProjectDetails(@Query("proj_id") projId: Int): Call<List<ProjectDetail>>
 
     //프로젝트 상세 정보 업데이트
-    @POST("/updateprojdetail/{proj_id}")
+    @PUT("/updateprojdetail/{proj_id}")
     fun updateProjectDetail(@Path("proj_id") projectId: Int, @Body project: ProjectDetail): Call<Void>
 
     //프로젝트 업데이트
