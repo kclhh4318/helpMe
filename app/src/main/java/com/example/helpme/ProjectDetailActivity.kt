@@ -14,21 +14,18 @@ import retrofit2.Response
 import java.io.Serializable
 
 class ProjectDetailActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityProjectDetailBinding
     private lateinit var projectDetail: ProjectDetail
     private lateinit var currentUserEmail: String
-    private lateinit var dbHelper: LikedProjectsDatabaseHelper
+    private var projectId: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProjectDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        dbHelper = LikedProjectsDatabaseHelper(this)
-
         currentUserEmail = intent.getStringExtra("currentUserEmail") ?: ""
-        val projectId = intent.getIntExtra("proj_id", -1)
+        projectId = intent.getIntExtra("proj_id", -1)
 
         if (projectId != -1) {
             loadProjectDetails(projectId)
@@ -44,19 +41,14 @@ class ProjectDetailActivity : AppCompatActivity() {
 
     private fun loadProjectDetails(projectId: Int) {
         val apiService = RetrofitClient.instance.create(ApiService::class.java)
-        apiService.getProjectDetails(projectId.toString(), currentUserEmail).enqueue(object : Callback<List<ProjectDetail>> {
-            override fun onResponse(call: Call<List<ProjectDetail>>, response: Response<List<ProjectDetail>>) {
+        apiService.getProjectDetails(projectId).enqueue(object : Callback<ProjectDetail> {
+            override fun onResponse(call: Call<ProjectDetail>, response: Response<ProjectDetail>) {
                 if (response.isSuccessful) {
-                    response.body()?.let { projectDetails ->
-                        if (projectDetails.isNotEmpty()) {
-                            projectDetail = projectDetails[0]  // 첫 번째 프로젝트 상세 정보 가져오기
-                            setupUI()
-                        } else {
-                            Toast.makeText(this@ProjectDetailActivity, "Project details not found", Toast.LENGTH_SHORT).show()
-                            finish()
-                        }
+                    response.body()?.let {
+                        projectDetail = it
+                        setupUI()
                     } ?: run {
-                        Toast.makeText(this@ProjectDetailActivity, "Project details not found", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@ProjectDetailActivity, "No project details found", Toast.LENGTH_SHORT).show()
                         finish()
                     }
                 } else {
@@ -65,7 +57,7 @@ class ProjectDetailActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<List<ProjectDetail>>, t: Throwable) {
+            override fun onFailure(call: Call<ProjectDetail>, t: Throwable) {
                 Toast.makeText(this@ProjectDetailActivity, "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
                 finish()
             }
@@ -73,68 +65,8 @@ class ProjectDetailActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        val isCurrentUserProject = projectDetail.email == currentUserEmail
-
-        // 데이터베이스에서 현재 좋아요 상태와 개수를 가져옵니다
-        projectDetail.isLiked = dbHelper.isProjectLiked(projectDetail.title, currentUserEmail)
-        projectDetail.likes = dbHelper.getProjectLikes(projectDetail.title)
-
-        setHeartIcon(projectDetail.isLiked, isCurrentUserProject)
-
-        binding.heartIcon.setOnClickListener {
-            if (!isCurrentUserProject) {
-                projectDetail.isLiked = !projectDetail.isLiked
-                if (projectDetail.isLiked) {
-                    dbHelper.saveLikedProject(projectDetail.title, currentUserEmail)
-                    projectDetail.likes++
-                } else {
-                    dbHelper.removeLikedProject(projectDetail.title, currentUserEmail)
-                    projectDetail.likes--
-                }
-                setHeartIcon(projectDetail.isLiked, isCurrentUserProject)
-                updateProjectLikes(projectDetail)
-                val resultIntent = Intent().putExtra("updatedProject", projectDetail as Serializable)
-                setResult(RESULT_OK, resultIntent)
-            }
-        }
-
-        setupViewPagerAndTabs()
-
-        // 프로젝트 정보 설정
         binding.projectTitle.text = projectDetail.title
-    }
-
-    private fun setHeartIcon(isLiked: Boolean, isCurrentUserProject: Boolean) {
-        if (isCurrentUserProject) {
-            binding.heartIcon.setImageResource(R.drawable.ic_heart_off)
-            binding.heartIcon.isEnabled = false
-        } else {
-            val iconRes = if (isLiked) R.drawable.ic_heart_on else R.drawable.ic_heart_off
-            binding.heartIcon.setImageResource(iconRes)
-            binding.heartIcon.isEnabled = true
-        }
-    }
-
-    private fun updateProjectLikes(project: ProjectDetail) {
-        // 여기에 서버와 통신하여 좋아요 상태를 업데이트하는 코드를 추가할 수 있습니다.
-        // 현재는 로컬 데이터베이스만 업데이트합니다.
-    }
-
-    private fun updateProjectOnExit() {
-        val apiService = RetrofitClient.instance.create(ApiService::class.java)
-        apiService.updateProjectDetail(projectDetail.proj_id, projectDetail).enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (!response.isSuccessful) {
-                    // 오류 처리
-                }
-                finish()
-            }
-
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                // 오류 처리
-                finish()
-            }
-        })
+        setupViewPagerAndTabs()
     }
 
     private fun setupViewPagerAndTabs() {
@@ -143,9 +75,25 @@ class ProjectDetailActivity : AppCompatActivity() {
         binding.tabLayout.setupWithViewPager(binding.viewPager)
     }
 
-    // 액티비티를 종료할 때 결과를 설정합니다.
-    override fun finish() {
+    private fun updateProjectOnExit() {
+        val apiService = RetrofitClient.instance.create(ApiService::class.java)
+        apiService.updateProjectDetail(projectDetail.proj_id, projectDetail).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (!response.isSuccessful) {
+                    Toast.makeText(this@ProjectDetailActivity, "Failed to update project details", Toast.LENGTH_SHORT).show()
+                }
+                finish()
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Toast.makeText(this@ProjectDetailActivity, "Network error: ${t.message}", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+        })
+    }
+
+    override fun onBackPressed() {
         updateProjectOnExit()
-        super.finish()
+        super.onBackPressed()
     }
 }

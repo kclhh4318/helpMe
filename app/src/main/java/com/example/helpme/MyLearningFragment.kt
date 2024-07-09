@@ -4,7 +4,7 @@ import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -76,7 +76,7 @@ class MyLearningFragment : Fragment() {
                 showAddProjectDialog()
             } else {
                 val intent = Intent(activity, ProjectDetailActivity::class.java).apply {
-                    putExtra("project", project as Parcelable) // 명시적으로 Parcelable로 캐스팅
+                    putExtra("proj_id", project.proj_id)
                     putExtra("currentUserEmail", email)
                 }
                 startActivity(intent)
@@ -98,6 +98,7 @@ class MyLearningFragment : Fragment() {
             override fun onResponse(call: Call<List<Project>>, response: Response<List<Project>>) {
                 if (response.isSuccessful) {
                     projects.clear()
+                    Log.d("API_CALL", "프로젝트 데이터 불러오기 성공")
                     response.body()?.let {
                         projects.addAll(it)
                     }
@@ -108,6 +109,7 @@ class MyLearningFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<List<Project>>, t: Throwable) {
+                Log.e("API_CALL", "네트워크 오류 발생", t)
                 Toast.makeText(context, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
             }
         })

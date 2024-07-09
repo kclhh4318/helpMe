@@ -31,32 +31,7 @@ class AuthCodeHandlerActivity : AppCompatActivity() {
                     Log.e(TAG, "사용자 정보 요청 성공: ${user.kakaoAccount?.profile?.nickname}")
 
                     // 사용자 정보 서버로 전달
-                    val apiService = RetrofitClient.instance.create(ApiService::class.java)
-                    val userToSend = User(
-                        email = user.kakaoAccount?.email ?: "",
-                        nickname = user.kakaoAccount?.profile?.nickname ?: ""
-                    )
-
-                    apiService.saveUser(userToSend).enqueue(object : Callback<Void> {
-                        override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                            if (response.isSuccessful) {
-                                Log.d(TAG, "서버에 사용자 정보 저장 성공")
-                            } else {
-                                Log.e(TAG, "서버에 사용자 정보 저장 실패: ${response.code()}")
-                            }
-                        }
-
-                        override fun onFailure(call: Call<Void>, t: Throwable) {
-                            Log.e(TAG, "서버 요청 실패: ${t.message}")
-                        }
-                    })
-
-                    // 사용자 정보 전달
-                    val intent = Intent(this, MainActivity::class.java)
-                    intent.putExtra("nickname", user.kakaoAccount?.profile?.nickname)
-                    intent.putExtra("email", user.kakaoAccount?.email)
-                    intent.putExtra("profile_image", user.kakaoAccount?.profile?.thumbnailImageUrl)
-                    startActivity(intent)
+                    sendUserInfoToServer(user)
                 }
             }
         }
@@ -87,5 +62,37 @@ class AuthCodeHandlerActivity : AppCompatActivity() {
             Log.d(TAG, "카카오톡 설치되지 않음, 카카오 이메일 로그인 시도")
             UserApiClient.instance.loginWithKakaoAccount(this, callback = mCallback) // 카카오 이메일 로그인
         }
+    }
+
+    private fun sendUserInfoToServer(user: com.kakao.sdk.user.model.User) {
+        val apiService = RetrofitClient.instance.create(ApiService::class.java)
+        val userToSend = User(
+            email = user.kakaoAccount?.email ?: "",
+            nickname = user.kakaoAccount?.profile?.nickname ?: ""
+        )
+
+        apiService.saveUser(userToSend).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Log.d(TAG, "서버에 사용자 정보 저장 성공")
+                    // POST 요청 성공 후 MainActivity로 이동
+                    val intent = Intent(this@AuthCodeHandlerActivity, MainActivity::class.java).apply {
+                        putExtra("nickname", user.kakaoAccount?.profile?.nickname)
+                        putExtra("email", user.kakaoAccount?.email)
+                        putExtra("profile_image", user.kakaoAccount?.profile?.thumbnailImageUrl)
+                    }
+                    startActivity(intent)
+                    finish()
+                } else {
+                    Log.e(TAG, "서버에 사용자 정보 저장 실패: ${response.code()}")
+                    // 실패 시 처리 (예: 사용자에게 알림)
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e(TAG, "서버 요청 실패: ${t.message}")
+                // 네트워크 오류 등의 실패 처리 (예: 사용자에게 알림)
+            }
+        })
     }
 }

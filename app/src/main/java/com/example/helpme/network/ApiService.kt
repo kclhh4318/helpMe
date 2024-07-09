@@ -12,9 +12,11 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
+
     @POST("/auth/kakao/callback")
     fun saveUser(@Body user: User): Call<Void>
 
+    //유저의 프로젝트들 모두 불러오기
     @GET("/user")
     fun getUserProjects(@Query("user_id") userId: String): Call<List<Project>>
 
@@ -22,14 +24,16 @@ interface ApiService {
     @POST("/newproj")
     fun createProject(@Body newProject: Project): Call<Void>
 
+
     @POST("/detailin")
     fun createProjectDetail(@Body newProjectDetail: ProjectDetail): Call<Void>
 
+    //프로젝트 상세 정보 가져오기
     @GET("/detailout")
-    fun getProjectDetails(@Query("proj_id") projId: String,
-                          @Query("user_id") userId: String): Call<List<ProjectDetail>>
+    fun getProjectDetails(@Query("proj_id") projId: Int): Call<ProjectDetail>
 
-    @PUT("/updateprojdetail/{proj_id}")
+    //프로젝트 상세 정보 업데이트
+    @POST("/updateprojdetail/{proj_id}")
     fun updateProjectDetail(@Path("proj_id") projectId: Int, @Body project: ProjectDetail): Call<Void>
 
     //@PUT("/projects/updateContents")

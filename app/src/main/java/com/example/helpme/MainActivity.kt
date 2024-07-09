@@ -25,13 +25,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val bottomNavigationView: BottomNavigationView = findViewById(R.id.nav_view)
-        bottomNavigationView.labelVisibilityMode = LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED
+        navView = findViewById(R.id.nav_view)
+        navView.labelVisibilityMode = LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
-        navView = findViewById(R.id.nav_view)
         navView.setupWithNavController(navController)
 
         userNickname = intent.getStringExtra("nickname") ?: "No Nickname"
@@ -42,14 +41,38 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.navigation_my_learning -> {
                     navController.navigate(R.id.navigation_my_learning)
+                    updateBottomNavigationIcons(R.id.navigation_my_learning)
                     true
                 }
                 R.id.navigation_explore -> {
                     navController.navigate(R.id.navigation_explore)
+                    updateBottomNavigationIcons(R.id.navigation_explore)
                     true
                 }
                 else -> false
             }
+        }
+
+        // 초기 선택 상태 설정
+        updateBottomNavigationIcons(R.id.navigation_my_learning)
+    }
+
+    private fun updateBottomNavigationIcons(selectedItemId: Int) {
+        val menu = navView.menu
+
+        val homeItem = menu.findItem(R.id.navigation_my_learning)
+        val exploreItem = menu.findItem(R.id.navigation_explore)
+
+        homeItem.icon = if (selectedItemId == R.id.navigation_my_learning) {
+            getDrawable(R.drawable.ic_home_on)
+        } else {
+            getDrawable(R.drawable.ic_home_off)
+        }
+
+        exploreItem.icon = if (selectedItemId == R.id.navigation_explore) {
+            getDrawable(R.drawable.ic_book_on)
+        } else {
+            getDrawable(R.drawable.ic_book_off)
         }
     }
 
