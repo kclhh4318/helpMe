@@ -42,6 +42,7 @@ class ReferenceFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
                 project.ref = s.toString()
+                (activity as? ProjectDetailActivity)?.updateProjectDetail(project)
             }
         })
 
@@ -65,28 +66,11 @@ class ReferenceFragment : Fragment() {
             binding.referenceEditText.visibility = View.GONE
             binding.referenceTextView.text = binding.referenceEditText.text.toString()
             project.ref = binding.referenceEditText.text.toString()
-            // updateProjectReference()
+            (activity as? ProjectDetailActivity)?.updateProjectDetail(project)
             val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(binding.referenceEditText.windowToken, 0)
         }
     }
-
-    /*
-    private fun updateProjectReference() {
-        val apiService = RetrofitClient.instance.create(ApiService::class.java)
-        apiService.updateProjectReference(project).enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (!response.isSuccessful) {
-                    // 오류 처리
-                }
-            }
-
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                // 오류 처리
-            }
-        })
-    }
-    */
 
     companion object {
         fun newInstance(project: ProjectDetail): ReferenceFragment {

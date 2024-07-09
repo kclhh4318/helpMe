@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/white"> <!-- Set a background color to ensure contrast -->
 
     <!-- 언어 필터 버튼 -->
     <HorizontalScrollView
@@ -118,7 +119,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="프로젝트 둘러보기"
-            android:textSize="24sp" />
+            android:textColor="@color/black"
+        android:textSize="24sp" />
     </LinearLayout>
 
     <!-- 프로젝트 리스트 -->

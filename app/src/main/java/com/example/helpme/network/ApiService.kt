@@ -36,8 +36,8 @@ interface ApiService {
     fun getProjectDetails(@Query("proj_id") projId: Int): Call<List<ProjectDetail>>
 
     //프로젝트 상세 정보 업데이트
-    @PUT("/updateprojdetail/{proj_id}")
-    fun updateProjectDetail(@Path("proj_id") projectId: Int, @Body project: ProjectDetail): Call<Void>
+    @PUT("/updateprojdetail")
+    fun updateProjectDetail(@Body projectDetail: ProjectDetail): Call<Void>
 
     //프로젝트 업데이트
     @PUT("/updateproj/{proj_id}")

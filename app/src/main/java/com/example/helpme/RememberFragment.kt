@@ -11,11 +11,6 @@ import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import com.example.helpme.databinding.FragmentRememberBinding
 import com.example.helpme.model.ProjectDetail
-import com.example.helpme.network.ApiService
-import com.example.helpme.network.RetrofitClient
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class RememberFragment : Fragment() {
 
@@ -47,6 +42,7 @@ class RememberFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
                 project.remember = s.toString()
+                (activity as? ProjectDetailActivity)?.updateProjectDetail(project)
             }
         })
 
@@ -70,28 +66,11 @@ class RememberFragment : Fragment() {
             binding.rememberEditText.visibility = View.GONE
             binding.rememberTextView.text = binding.rememberEditText.text.toString()
             project.remember = binding.rememberEditText.text.toString()
-            // updateProjectContents()
+            (activity as? ProjectDetailActivity)?.updateProjectDetail(project)
             val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(binding.rememberEditText.windowToken, 0)
         }
     }
-
-    /*
-    private fun updateProjectContents() {
-        val apiService = RetrofitClient.instance.create(ApiService::class.java)
-        apiService.updateProjectContents(project).enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (!response.isSuccessful) {
-                    // 오류 처리
-                }
-            }
-
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                // 오류 처리
-            }
-        })
-    }
-    */
 
     companion object {
         fun newInstance(project: ProjectDetail): RememberFragment {

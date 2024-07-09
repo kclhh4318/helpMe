@@ -5,5 +5,5 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ProjectId (
-    val proj_id: Int
+    var proj_id: Int
 ):Parcelable

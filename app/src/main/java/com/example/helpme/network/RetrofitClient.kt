@@ -1,26 +1,23 @@
-package com.example.helpme.network
-
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-
 object RetrofitClient {
-    private const val BASE_URL = "http://172.10.7.154:80"
+    private const val BASE_URL = "http://172.10.7.154"
 
-    private val loggingInterceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
+    private val logging = HttpLoggingInterceptor().apply {
+        setLevel(HttpLoggingInterceptor.Level.BODY)
     }
 
-    private val httpClient = OkHttpClient.Builder().apply {
-        addInterceptor(loggingInterceptor)
-    }.build()
+    private val client = OkHttpClient.Builder()
+        .addInterceptor(logging)
+        .build()
 
     val instance: Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .client(httpClient)
+            .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

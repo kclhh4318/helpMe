@@ -10,7 +10,6 @@ import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import android.content.Intent
 import com.example.helpme.network.ApiService
-import com.example.helpme.network.RetrofitClient
 import com.example.helpme.model.User
 import retrofit2.Call
 import retrofit2.Callback
