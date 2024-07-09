@@ -13,6 +13,7 @@ import com.example.helpme.network.ApiService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import com.example.helpme.network.RetrofitClient
 
 class MyPageActivity : AppCompatActivity() {
 

@@ -2,6 +2,7 @@ package com.example.helpme
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import com.example.helpme.network.ApiService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import com.example.helpme.network.RetrofitClient
 
 class ExploreFragment : Fragment() {
 
@@ -121,15 +123,17 @@ class ExploreFragment : Fragment() {
         apiService.getAllProjects().enqueue(object : Callback<List<ProjectDetail>> {
             override fun onResponse(call: Call<List<ProjectDetail>>, response: Response<List<ProjectDetail>>) {
                 if (response.isSuccessful) {
-                    projects = response.body()?.sortedByDescending { it.likes ?: false }?.toMutableList() ?: mutableListOf()
+                    projects = response.body()?.sortedByDescending { it.isLiked ?: false }?.toMutableList() ?: mutableListOf()
                     adapter.updateProjects(projects)
                 } else {
                     Toast.makeText(context, "프로젝트를 불러오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
+                    Log.e("ExploreFragment", "Error code: ${response.code()}, Error body: ${response.errorBody()?.string()}")
                 }
             }
 
             override fun onFailure(call: Call<List<ProjectDetail>>, t: Throwable) {
                 Toast.makeText(context, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                Log.e("ExploreFragment", "Network error: ${t.message}", t)
             }
         })
     }

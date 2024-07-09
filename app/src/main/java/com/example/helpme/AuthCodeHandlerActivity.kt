@@ -11,6 +11,7 @@ import com.kakao.sdk.user.UserApiClient
 import android.content.Intent
 import com.example.helpme.network.ApiService
 import com.example.helpme.model.User
+import com.example.helpme.network.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

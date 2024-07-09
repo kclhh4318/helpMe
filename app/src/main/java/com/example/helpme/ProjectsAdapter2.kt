@@ -60,7 +60,7 @@ class ProjectsAdapter2(
 
         holder.languageTextView.text = project.lan ?: "언어 미정"
         holder.typeTextView.text = project.type ?: "타입 미정"
-        holder.likesTextView.text = project.likes.toString()
+        holder.likesTextView.text = (project.likes ?: 0).toString() // 수정된 부분
 
         holder.likeImageView.setImageResource(R.drawable.ic_heart_on)
 
@@ -68,6 +68,7 @@ class ProjectsAdapter2(
             onItemClick(project)
         }
     }
+
 
     override fun getItemCount(): Int {
         return projects.size

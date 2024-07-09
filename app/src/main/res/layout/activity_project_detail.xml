@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/heartIcon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_margin="16dp"
         android:src="@drawable/ic_heart_off"
         app:layout_constraintTop_toTopOf="parent"
@@ -29,8 +29,8 @@
 
     <ImageView
         android:id="@+id/exitIcon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_margin="16dp"
         android:src="@drawable/ic_exit"
         app:layout_constraintTop_toTopOf="parent"

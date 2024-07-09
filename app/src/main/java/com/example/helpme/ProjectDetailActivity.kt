@@ -1,5 +1,6 @@
 package com.example.helpme
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -12,12 +13,14 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import com.example.helpme.model.ProjectId
+import com.example.helpme.network.RetrofitClient
 
 class ProjectDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProjectDetailBinding
     private var projectDetail: ProjectDetail? = null
     private lateinit var currentUserEmail: String
     private var projectId: Int = -1
+    private lateinit var currentUserId: String // 현재 사용자 ID 추가
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +30,7 @@ class ProjectDetailActivity : AppCompatActivity() {
         // 인텐트로부터 데이터 수신
         projectId = intent.getIntExtra("proj_id", -1)
         currentUserEmail = intent.getStringExtra("currentUserEmail") ?: ""
+        currentUserId = intent.getStringExtra("currentUserId") ?: "" // 현재 사용자 ID 수신
 
         val title = intent.getStringExtra("title") ?: "Untitled Project"
         val start_d = intent.getStringExtra("start_d")
@@ -47,16 +51,6 @@ class ProjectDetailActivity : AppCompatActivity() {
 
         binding.heartIcon.setOnClickListener {
             toggleLikeStatus()
-        }
-    }
-
-    fun updateProjectDetail(updatedProject: ProjectDetail) {
-        projectDetail?.let {
-            it.proj_id = updatedProject.proj_id
-            it.contents = updatedProject.contents
-            it.remember = updatedProject.remember
-            it.ref = updatedProject.ref
-            Log.d("ProjectDetailActivity", "Updated project detail: ${it.ref}")
         }
     }
 
@@ -93,7 +87,7 @@ class ProjectDetailActivity : AppCompatActivity() {
                     Log.d("ProjectDetailActivity", "API Response: $projectDetails")
                     if (projectDetails != null && projectDetails.isNotEmpty()) {
                         projectDetail = projectDetails[0].copy(proj_id = projectId)
-                        Log.d("ProjectDetailActivity", "Likes before API call: ${projectDetail?.likes}")
+                        Log.d("ProjectDetailActivity", "Likes before API call: ${projectDetail?.isLiked}")
                     } else {
                         Log.e("ProjectDetailActivity", "No project details found for proj_id: $projectId")
                         // Intent에서 받은 데이터를 사용해 ProjectDetail 초기화
@@ -108,7 +102,8 @@ class ProjectDetailActivity : AppCompatActivity() {
                             contents = null,
                             remember = null,
                             ref = null,
-                            likes = false
+                            isLiked = false,
+                            likes = 0,
                         )
                     }
                     setupUI()
@@ -135,7 +130,7 @@ class ProjectDetailActivity : AppCompatActivity() {
                 binding.heartIcon.visibility = View.GONE
             } else {
                 binding.heartIcon.visibility = View.VISIBLE
-                updateLikeIcon(it.likes == true)
+                updateLikeIcon(it.isLiked == true)
             }
             setupViewPagerAndTabs()
         }
@@ -155,9 +150,9 @@ class ProjectDetailActivity : AppCompatActivity() {
 
     private fun toggleLikeStatus() {
         projectDetail?.let {
-            it.likes = !(it.likes ?: false)
-            Log.d("ProjectDetailActivity", "Likes status changed: ${it.likes}") // 로그 추가
-            updateLikeIcon(it.likes == true)
+            it.isLiked = !(it.isLiked ?: false)
+            Log.d("ProjectDetailActivity", "Likes status changed: ${it.isLiked}") // 로그 추가
+            updateLikeIcon(it.isLiked == true)
 
             val apiService = RetrofitClient.instance.create(ApiService::class.java)
             apiService.updateProjectDetail(it).enqueue(object : Callback<Void> {
@@ -178,17 +173,15 @@ class ProjectDetailActivity : AppCompatActivity() {
 
     private fun updateProjectOnExit() {
         projectDetail?.let {
-            // Log the values before making the API call
             Log.d("ProjectDetailActivity", "Updating Project: ID=${it.proj_id}, Title=${it.title}")
             Log.d("ProjectDetailActivity", "Contents: ${it.contents}")
             Log.d("ProjectDetailActivity", "Remember: ${it.remember}")
             Log.d("ProjectDetailActivity", "Reference before API call: ${it.ref}")
-            Log.d("ProjectDetailActivity", "Likes before API call: ${it.likes}")
+            Log.d("ProjectDetailActivity", "Likes before API call: ${it.isLiked}")
 
-            projectDetail?.let{
+            projectDetail?.let {
                 it.proj_id = projectId
-
-            }?: finish()
+            } ?: finish()
 
             val apiService = RetrofitClient.instance.create(ApiService::class.java)
             apiService.updateProjectDetail(it).enqueue(object : Callback<Void> {
@@ -197,12 +190,13 @@ class ProjectDetailActivity : AppCompatActivity() {
                     Log.d("ProjectDetailActivity", "Response Body: ${response.body()}")
                     Log.d("ProjectDetailActivity", "Error Body: ${response.errorBody()?.string()}")
                     Log.d("ProjectDetailActivity", "Reference after API call: ${it.ref}")
-                    Log.d("ProjectDetailActivity", "Likes after API call: ${it.likes}")
+                    Log.d("ProjectDetailActivity", "Likes after API call: ${it.isLiked}")
                     if (!response.isSuccessful) {
                         val errorBody = response.errorBody()?.string()
                         Log.e("ProjectDetailActivity", "Failed to update project details: $errorBody")
                         Toast.makeText(this@ProjectDetailActivity, "Failed to update project details", Toast.LENGTH_SHORT).show()
                     }
+                    broadcastUpdate()
                     finish()
                 }
 
@@ -213,6 +207,23 @@ class ProjectDetailActivity : AppCompatActivity() {
             })
         } ?: finish()
     }
+
+    private fun broadcastUpdate() {
+        val intent = Intent("com.example.helpme.PROJECT_UPDATED")
+        sendBroadcast(intent)
+    }
+
+    fun updateProjectDetail(updatedProject: ProjectDetail) {
+        projectDetail?.let {
+            it.proj_id = updatedProject.proj_id
+            it.contents = updatedProject.contents
+            it.remember = updatedProject.remember
+            it.ref = updatedProject.ref
+            Log.d("ProjectDetailActivity", "Updated project detail: ${it.ref}")
+        }
+    }
+
+
 
     override fun onBackPressed() {
         updateProjectOnExit()

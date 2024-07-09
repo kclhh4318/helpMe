@@ -24,35 +24,40 @@
                 android:layout_height="wrap_content"
                 android:text="Python"
                 android:textStyle="normal"
-                style="@style/RoundedButtonStyle"/>
+                style="@style/RoundedButtonStyle"
+                android:textColor="@color/black" />
             <Button
                 android:id="@+id/button_lang_java"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Java"
                 android:textStyle="normal"
-                style="@style/RoundedButtonStyle"/>
+                style="@style/RoundedButtonStyle"
+                android:textColor="@color/black"/>
             <Button
                 android:id="@+id/button_lang_kotlin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Kotlin"
                 android:textStyle="normal"
-                style="@style/RoundedButtonStyle"/>
+                style="@style/RoundedButtonStyle"
+                android:textColor="@color/black"/>
             <Button
                 android:id="@+id/button_lang_cpp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="C++"
                 android:textStyle="normal"
-                style="@style/RoundedButtonStyle"/>
+                style="@style/RoundedButtonStyle"
+                android:textColor="@color/black"/>
             <Button
                 android:id="@+id/button_lang_js"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="JavaScript"
                 android:textStyle="normal"
-                style="@style/RoundedButtonStyle"/>
+                style="@style/RoundedButtonStyle"
+                android:textColor="@color/black"/>
         </LinearLayout>
     </HorizontalScrollView>
 
@@ -73,35 +78,40 @@
                 android:layout_height="wrap_content"
                 android:text="Machine Learning"
                 android:textStyle="normal"
-                style="@style/RoundedButtonStyle"/>
+                style="@style/RoundedButtonStyle"
+                android:textColor="@color/black"/>
             <Button
                 android:id="@+id/button_type_web"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Web Development"
                 android:textStyle="normal"
-                style="@style/RoundedButtonStyle"/>
+                style="@style/RoundedButtonStyle"
+                android:textColor="@color/black"/>
             <Button
                 android:id="@+id/button_type_mobile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Mobile Development"
                 android:textStyle="normal"
-                style="@style/RoundedButtonStyle"/>
+                style="@style/RoundedButtonStyle"
+                android:textColor="@color/black"/>
             <Button
                 android:id="@+id/button_type_blockchain"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Blockchain"
                 android:textStyle="normal"
-                style="@style/RoundedButtonStyle"/>
+                style="@style/RoundedButtonStyle"
+                android:textColor="@color/black"/>
             <Button
                 android:id="@+id/button_type_game"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Game Development"
                 android:textStyle="normal"
-                style="@style/RoundedButtonStyle"/>
+                style="@style/RoundedButtonStyle"
+                android:textColor="@color/black"/>
         </LinearLayout>
     </HorizontalScrollView>
 
@@ -118,7 +128,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="프로젝트 둘러보기"
+            android:text="둘러보기"
             android:textColor="@color/black"
         android:textSize="24sp" />
     </LinearLayout>
