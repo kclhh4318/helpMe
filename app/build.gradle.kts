@@ -93,6 +93,8 @@ dependencies {
     implementation ("androidx.cardview:cardview:1.0.0")
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
+    implementation ("io.github.inflationx:calligraphy3:3.1.1")
+    implementation ("io.github.inflationx:viewpump:2.0.3")
 
     kapt("com.github.bumptech.glide:compiler:4.16.0") // kapt로 변경
 
