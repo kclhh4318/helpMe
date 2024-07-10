@@ -50,7 +50,7 @@ class MyLearningFragment : Fragment() {
         val mostUsedTextView: TextView = view.findViewById(R.id.text_most_used)
 
         nicknameTextView.text = "$nickname 님, 어서오세요!"
-        mostUsedTextView.text = "가장 열심히 공부하고 있어요!"
+        mostUsedTextView.text = "helpMe와 함께\n열심히 공부해보아요!\nᑦ(⁎◕ ˕ ◕)ᐣ"
         Glide.with(this)
             .load(profileImage)
             .placeholder(R.drawable.ic_profile_placeholder)
@@ -204,15 +204,20 @@ class MyLearningFragment : Fragment() {
         apiService.createProject(newProject).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    // 서버에서 프로젝트 목록을 다시 불러오는 대신 로컬 리스트에 추가하고 Adapter에 알림
+                    Log.d("AddProject", "프로젝트 추가 성공: ${newProject.title}")
                     loadProjectsFromServer()
                 } else {
-                    Toast.makeText(context, "프로젝트 추가에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("AddProject", "프로젝트 추가 실패. 응답 코드: ${response.code()}, 에러 메시지: $errorBody")
+                    Log.e("AddProject", "요청 데이터: $newProject")
+                    Toast.makeText(context, "프로젝트 추가에 실패했습니다. (오류 코드: ${response.code()})", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
-                Toast.makeText(context, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                Log.e("AddProject", "네트워크 오류 발생", t)
+                Log.e("AddProject", "요청 데이터: $newProject")
+                Toast.makeText(context, "네트워크 오류가 발생했습니다: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }

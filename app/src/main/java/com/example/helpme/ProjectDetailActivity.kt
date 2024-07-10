@@ -83,7 +83,6 @@ class ProjectDetailActivity : AppCompatActivity() {
                     Log.d("ProjectDetailActivity", "Project ID created in DB successfully")
                 } else {
                     Log.e("ProjectDetailActivity", "Failed to create project ID in DB: ${response.errorBody()?.string()}")
-                    Toast.makeText(this@ProjectDetailActivity, "Project may already exist, loading details...", Toast.LENGTH_SHORT).show()
                 }
                 Log.d("ProjectDetailActivity", "Calling loadProjectDetails")
                 // 응답과 상관없이 프로젝트 세부 정보를 로드

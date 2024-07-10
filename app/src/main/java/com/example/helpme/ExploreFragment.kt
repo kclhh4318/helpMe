@@ -141,6 +141,7 @@ class ExploreFragment : Fragment() {
             override fun onResponse(call: Call<List<ProjectDetail>>, response: Response<List<ProjectDetail>>) {
                 if (response.isSuccessful) {
                     projects = response.body()?.sortedByDescending { it.isLiked ?: false }?.toMutableList() ?: mutableListOf()
+                    projects = response.body()?.sortedByDescending { it.likes ?: 0 }?.toMutableList() ?: mutableListOf()
                     adapter.updateProjects(projects)
                 } else {
                     Toast.makeText(context, "프로젝트를 불러오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()

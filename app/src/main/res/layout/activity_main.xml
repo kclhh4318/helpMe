@@ -24,5 +24,4 @@
         android:background="@drawable/bottom_nav_background"
         app:menu="@menu/bottom_nav_menu" />
 
-
 </RelativeLayout>

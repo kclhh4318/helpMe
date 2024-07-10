@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@color/white"> <!-- Set a background color to ensure contrast -->
+    android:padding="16dp">
 
     <!-- 언어 필터 버튼 -->
     <HorizontalScrollView
@@ -25,6 +24,8 @@
                 android:text="Python"
                 android:textStyle="normal"
                 style="@style/RoundedButtonStyle"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:textColor="@color/black" />
             <Button
                 android:id="@+id/button_lang_java"
@@ -33,6 +34,8 @@
                 android:text="Java"
                 android:textStyle="normal"
                 style="@style/RoundedButtonStyle"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:textColor="@color/black"/>
             <Button
                 android:id="@+id/button_lang_kotlin"
@@ -41,6 +44,8 @@
                 android:text="Kotlin"
                 android:textStyle="normal"
                 style="@style/RoundedButtonStyle"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:textColor="@color/black"/>
             <Button
                 android:id="@+id/button_lang_cpp"
@@ -49,6 +54,8 @@
                 android:text="C++"
                 android:textStyle="normal"
                 style="@style/RoundedButtonStyle"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:textColor="@color/black"/>
             <Button
                 android:id="@+id/button_lang_js"
@@ -57,6 +64,8 @@
                 android:text="JavaScript"
                 android:textStyle="normal"
                 style="@style/RoundedButtonStyle"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:textColor="@color/black"/>
         </LinearLayout>
     </HorizontalScrollView>
@@ -79,6 +88,8 @@
                 android:text="Machine Learning"
                 android:textStyle="normal"
                 style="@style/RoundedButtonStyle"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:textColor="@color/black"/>
             <Button
                 android:id="@+id/button_type_web"
@@ -87,6 +98,8 @@
                 android:text="Web Development"
                 android:textStyle="normal"
                 style="@style/RoundedButtonStyle"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:textColor="@color/black"/>
             <Button
                 android:id="@+id/button_type_mobile"
@@ -95,6 +108,8 @@
                 android:text="Mobile Development"
                 android:textStyle="normal"
                 style="@style/RoundedButtonStyle"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:textColor="@color/black"/>
             <Button
                 android:id="@+id/button_type_blockchain"
@@ -103,6 +118,8 @@
                 android:text="Blockchain"
                 android:textStyle="normal"
                 style="@style/RoundedButtonStyle"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:textColor="@color/black"/>
             <Button
                 android:id="@+id/button_type_game"
@@ -111,6 +128,8 @@
                 android:text="Game Development"
                 android:textStyle="normal"
                 style="@style/RoundedButtonStyle"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:textColor="@color/black"/>
         </LinearLayout>
     </HorizontalScrollView>

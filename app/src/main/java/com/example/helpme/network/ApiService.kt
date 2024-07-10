@@ -11,6 +11,7 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
+import com.example.helpme.model.Info
 
 interface ApiService {
 
@@ -46,4 +47,8 @@ interface ApiService {
     //전달값이 없으므로 @Query를 작성할 필요가 없다.
     @GET("/orderbylikes")
     fun getAllProjects(): Call<List<ProjectDetail>>
+
+    //마이페이지에서 유저의 프로젝트들 모두 불러오기
+    @GET("/mypage")
+    fun getUserInfo(@Query("user_id") userId: String): Call<List<Info>>
 }
