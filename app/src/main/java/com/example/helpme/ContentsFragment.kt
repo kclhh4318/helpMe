@@ -17,12 +17,21 @@ class ContentsFragment : Fragment() {
     private lateinit var binding: FragmentContentsBinding
     private lateinit var project: ProjectDetail
     private var isEditing = false
+    private var isProjectOwner: Boolean = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+
+        super.onCreate(savedInstanceState)
+        isProjectOwner = arguments?.getBoolean("isProjectOwner") ?: false
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentContentsBinding.inflate(inflater, container, false)
+        project = arguments?.getParcelable("project")!!
+        isProjectOwner = arguments?.getBoolean("isProjectOwner") ?: false
         return binding.root
     }
 
@@ -33,8 +42,12 @@ class ContentsFragment : Fragment() {
         binding.contentsTextView.text = project.contents
         binding.contentsEditText.setText(project.contents)
 
-        binding.contentsTextView.setOnClickListener {
-            toggleEditMode(true)
+        if (isProjectOwner) {
+            binding.contentsTextView.setOnClickListener {
+                toggleEditMode(true)
+            }
+        } else {
+            binding.contentsTextView.isClickable = false
         }
 
         binding.contentsEditText.addTextChangedListener(object : TextWatcher {
@@ -53,7 +66,10 @@ class ContentsFragment : Fragment() {
         }
     }
 
+
+
     private fun toggleEditMode(edit: Boolean) {
+        if(!isProjectOwner) return
         isEditing = edit
         if (edit) {
             binding.contentsTextView.visibility = View.GONE
@@ -73,10 +89,11 @@ class ContentsFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(project: ProjectDetail): ContentsFragment {
+        fun newInstance(project: ProjectDetail, isProjectOwner: Boolean): ContentsFragment {
             val fragment = ContentsFragment()
             val args = Bundle()
             args.putParcelable("project", project)
+            args.putBoolean("isProjectOwner", isProjectOwner)
             fragment.arguments = args
             return fragment
         }

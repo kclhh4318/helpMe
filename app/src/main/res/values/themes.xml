@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.HelpMe" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:fontFamily">@font/custom_font</item>
+    <style name="Theme.HelpMe" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:fontFamily">@font/myfont_regular</item>
+        <item name="fontFamily">@font/myfont_regular</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <!-- 기타 필요한 스타일 항목들 -->
+    </style>
+
+    <style name="ThemeOverlay.App.BottomNavigationView" parent="">
+        <item name="colorPrimary">#C80036</item>
+        <item name="colorOnSurface">@android:color/darker_gray</item>
     </style>
 </resources>

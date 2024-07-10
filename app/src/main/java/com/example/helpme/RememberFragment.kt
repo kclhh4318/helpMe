@@ -17,12 +17,21 @@ class RememberFragment : Fragment() {
     private lateinit var binding: FragmentRememberBinding
     private lateinit var project: ProjectDetail
     private var isEditing = false
+    private var isProjectOwner: Boolean = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+
+        super.onCreate(savedInstanceState)
+        isProjectOwner = arguments?.getBoolean("isProjectOwner") ?: false
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentRememberBinding.inflate(inflater, container, false)
+        project = arguments?.getParcelable("project")!!
+        isProjectOwner = arguments?.getBoolean("isProjectOwner") ?: false
         return binding.root
     }
 
@@ -33,8 +42,12 @@ class RememberFragment : Fragment() {
         binding.rememberTextView.text = project.remember
         binding.rememberEditText.setText(project.remember)
 
-        binding.rememberTextView.setOnClickListener {
-            toggleEditMode(true)
+        if (isProjectOwner) {
+            binding.rememberTextView.setOnClickListener {
+                toggleEditMode(true)
+            }
+        } else {
+            binding.rememberTextView.isClickable = false
         }
 
         binding.rememberEditText.addTextChangedListener(object : TextWatcher {
@@ -73,10 +86,11 @@ class RememberFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(project: ProjectDetail): RememberFragment {
+        fun newInstance(project: ProjectDetail, isProjectOwner: Boolean): RememberFragment {
             val fragment = RememberFragment()
             val args = Bundle()
             args.putParcelable("project", project)
+            args.putBoolean("isProjectOwner", isProjectOwner)
             fragment.arguments = args
             return fragment
         }

@@ -17,12 +17,21 @@ class ReferenceFragment : Fragment() {
     private lateinit var binding: FragmentReferenceBinding
     private lateinit var project: ProjectDetail
     private var isEditing = false
+    private var isProjectOwner: Boolean = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+
+        super.onCreate(savedInstanceState)
+        isProjectOwner = arguments?.getBoolean("isProjectOwner") ?: false
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentReferenceBinding.inflate(inflater, container, false)
+        project = arguments?.getParcelable("project")!!
+        isProjectOwner = arguments?.getBoolean("isProjectOwner") ?: false
         return binding.root
     }
 
@@ -33,8 +42,12 @@ class ReferenceFragment : Fragment() {
         binding.referenceTextView.text = project.ref
         binding.referenceEditText.setText(project.ref)
 
-        binding.referenceTextView.setOnClickListener {
-            toggleEditMode(true)
+        if (isProjectOwner) {
+            binding.referenceTextView.setOnClickListener {
+                toggleEditMode(true)
+            }
+        } else {
+            binding.referenceTextView.isClickable = false
         }
 
         binding.referenceEditText.addTextChangedListener(object : TextWatcher {
@@ -54,6 +67,7 @@ class ReferenceFragment : Fragment() {
     }
 
     private fun toggleEditMode(edit: Boolean) {
+        if (!isProjectOwner) return
         isEditing = edit
         if (edit) {
             binding.referenceTextView.visibility = View.GONE
@@ -73,10 +87,11 @@ class ReferenceFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(project: ProjectDetail): ReferenceFragment {
+        fun newInstance(project: ProjectDetail, isProjectOwner: Boolean): ReferenceFragment {
             val fragment = ReferenceFragment()
             val args = Bundle()
             args.putParcelable("project", project)
+            args.putBoolean("isProjectOwner", isProjectOwner)
             fragment.arguments = args
             return fragment
         }

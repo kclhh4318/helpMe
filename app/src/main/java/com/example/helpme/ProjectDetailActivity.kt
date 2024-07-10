@@ -28,6 +28,8 @@ class ProjectDetailActivity : AppCompatActivity() {
     private lateinit var currentUserId: String // 현재 사용자 ID 추가
     private var heartIcon: ImageView? = null
     private lateinit var sharedPreferences: SharedPreferences
+    private var isProjectOwner: Boolean = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +44,7 @@ class ProjectDetailActivity : AppCompatActivity() {
         projectId = intent.getIntExtra("proj_id", -1)
         currentUserEmail = intent.getStringExtra("currentUserEmail") ?: ""
         val projectOwnerEmail = intent.getStringExtra("projectOwnerEmail") ?: ""
+        isProjectOwner = currentUserEmail.trim().toLowerCase() == projectOwnerEmail.trim().toLowerCase()
 
         Log.d("ProjectDetailActivity", "Received currentUserEmail: $currentUserEmail")
         Log.d("ProjectDetailActivity", "Received projectOwnerEmail: $projectOwnerEmail")
@@ -170,7 +173,7 @@ class ProjectDetailActivity : AppCompatActivity() {
 
     private fun setupViewPagerAndTabs() {
         projectDetail?.let {
-            val pagerAdapter = ProjectDetailPagerAdapter(supportFragmentManager, it)
+            val pagerAdapter = ProjectDetailPagerAdapter(supportFragmentManager, it, isProjectOwner)
             binding.viewPager.adapter = pagerAdapter
             binding.tabLayout.setupWithViewPager(binding.viewPager)
         }

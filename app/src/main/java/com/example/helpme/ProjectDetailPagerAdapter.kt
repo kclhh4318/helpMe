@@ -5,14 +5,18 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.example.helpme.model.ProjectDetail
 
-class ProjectDetailPagerAdapter(fm: FragmentManager, private val project: ProjectDetail) : FragmentPagerAdapter(fm) {
+class ProjectDetailPagerAdapter(
+    fm: FragmentManager,
+    private val project: ProjectDetail,
+    private val isProjectOwner: Boolean
+) : FragmentPagerAdapter(fm) {
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
-            0 -> ContentsFragment.newInstance(project)
-            1 -> ReferenceFragment.newInstance(project)
-            2 -> RememberFragment.newInstance(project)
-            else -> ContentsFragment.newInstance(project)
+            0 -> ContentsFragment.newInstance(project, isProjectOwner)
+            1 -> RememberFragment.newInstance(project, isProjectOwner)
+            2 -> ReferenceFragment.newInstance(project, isProjectOwner)
+            else -> throw IllegalArgumentException("Invalid position")
         }
     }
 

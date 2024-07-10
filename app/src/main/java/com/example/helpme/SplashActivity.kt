@@ -21,6 +21,6 @@ class SplashActivity : AppCompatActivity() {
             val intent = Intent(this@SplashActivity, LoginActivity::class.java)
             startActivity(intent)
             finish()
-        }, 3000) // 3초 동안 스플래시 화면 표시
+        }, 3000) // 1.5초 동안 스플래시 화면 표시
     }
 }

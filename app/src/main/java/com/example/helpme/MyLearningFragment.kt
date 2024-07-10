@@ -46,10 +46,12 @@ class MyLearningFragment : Fragment() {
         // 프로필 설정
         val profileSection: LinearLayout = view.findViewById(R.id.profile_section)
         val profileImageView: ImageView = view.findViewById(R.id.profile_image)
-        val nicknameTextView: TextView = view.findViewById(R.id.text_my_learning)
+        val nicknameTextView: TextView = view.findViewById(R.id.text_nickname)
+        val greetingTextView: TextView = view.findViewById(R.id.text_greeting)
         val mostUsedTextView: TextView = view.findViewById(R.id.text_most_used)
 
-        nicknameTextView.text = "$nickname 님, 어서오세요!"
+        nicknameTextView.text = nickname
+        greetingTextView.text = "님, 어서오세요!"
         mostUsedTextView.text = "helpMe와 함께\n열심히 공부해보아요!\nᑦ(⁎◕ ˕ ◕)ᐣ"
         Glide.with(this)
             .load(profileImage)
