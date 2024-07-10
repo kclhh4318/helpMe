@@ -14,6 +14,7 @@ import java.util.Locale
 
 class ProjectsAdapter(
     private val projects: List<Project>,
+    private val currentUserEmail: String,
     private val onItemClicked: (Project?) -> Unit,
     private val onItemLongClicked: (Project) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -68,9 +69,20 @@ class ProjectsAdapter(
             Log.d("ProjectsAdapter", "설정된 언어: ${languageTextView.text}, 타입: ${typeTextView.text}")
 
             itemView.setOnClickListener {
-                val intent = Intent(itemView.context, ProjectDetailActivity::class.java)
-                intent.putExtra("proj_id", project.proj_id)  // Ensure proj_id is passed correctly
-                itemView.context.startActivity(intent)
+                val context = itemView.context
+                val intent = Intent(context, ProjectDetailActivity::class.java)
+                intent.putExtra("proj_id", project.proj_id)
+                intent.putExtra("currentUserEmail", currentUserEmail)
+                intent.putExtra("projectOwnerEmail", project.email)
+                intent.putExtra("title", project.title)
+                intent.putExtra("start_d", project.start_d)
+                intent.putExtra("end_d", project.end_d)
+                intent.putExtra("lan", project.lan)
+                intent.putExtra("type", project.type)
+                Log.d("ProjectsAdapter", "Sending project details: ${project.toString()}")
+                Log.d("ProjectsAdapter", "Sending currentUserEmail: $currentUserEmail")
+                Log.d("ProjectsAdapter", "Sending projectOwnerEmail: ${project.email}")
+                context.startActivity(intent)
             }
 
             itemView.setOnLongClickListener {
@@ -106,13 +118,6 @@ class ProjectsAdapter(
 
             // 폴더 아이콘 설정 (이미지가 이미 추가된 상태여야 합니다)
             iconFolder.setImageResource(R.drawable.ic_folder)
-
-            itemView.setOnClickListener {
-                val context = itemView.context
-                val intent = Intent(context, ProjectDetailActivity::class.java)
-                intent.putExtra("proj_id", project.proj_id)  // Pass the proj_id
-                context.startActivity(intent)
-            }
         }
     }
 

@@ -13,4 +13,5 @@
     <color name="windowBackground">#F5F5F5</color>
     <color name="blockBackground">#FFFFFF</color>
     <color name="blockBorder">#FFFFFF</color>
+    <color name="your_background_color">#FFF5E1</color>
 </resources>

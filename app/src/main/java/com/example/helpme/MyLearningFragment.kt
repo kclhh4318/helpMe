@@ -27,7 +27,7 @@ class MyLearningFragment : Fragment() {
     private lateinit var nickname: String
     private lateinit var email: String
     private lateinit var profileImage: String
-    private lateinit var projects: MutableList<Project>
+    private var projects: MutableList<Project> = mutableListOf()
     private lateinit var adapter: ProjectsAdapter
 
     private val languages = arrayOf("Python", "Java", "Kotlin", "C++", "JavaScript")
@@ -38,7 +38,6 @@ class MyLearningFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_my_learning, container, false)
-
         val activity = activity as MainActivity
         nickname = activity.intent.getStringExtra("nickname") ?: "No Nickname"
         email = activity.intent.getStringExtra("email") ?: "No Email"
@@ -67,32 +66,43 @@ class MyLearningFragment : Fragment() {
             startActivity(intent)
         }
 
-        // 리사이클러뷰 설정
-        val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view_projects)
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        projects = mutableListOf()
-        adapter = ProjectsAdapter(projects, { project: Project? ->
-            if (project == null) {
-                showAddProjectDialog()
-            } else {
-                val intent = Intent(activity, ProjectDetailActivity::class.java).apply {
-                    putExtra("proj_id", project.proj_id)
-                    putExtra("currentUserEmail", email)
-                    putExtra("title", project.title)
-                    putExtra("start_d", project.start_d)
-                    putExtra("end_d", project.end_d)
-                    putExtra("lan", project.lan)
-                    putExtra("type", project.type)
-                }
-                startActivity(intent)
-            }
-        }, { project: Project ->
-            showEditProjectDialog(project)
-        })
-        recyclerView.adapter = adapter
-
         // 서버로부터 프로젝트 데이터 가져오기
         loadProjectsFromServer()
+
+        // 리사이클러뷰 설정
+
+        // RecyclerView 설정
+        val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view_projects)
+        recyclerView.layoutManager = LinearLayoutManager(context)
+
+        adapter = ProjectsAdapter(
+            projects,
+            email,
+            onItemClicked = { project: Project? ->
+                if (project == null) {
+                    showAddProjectDialog()
+                } else {
+                    val intent = Intent(activity, ProjectDetailActivity::class.java).apply {
+                        putExtra("proj_id", project.proj_id)
+                        putExtra("currentUserEmail", email)
+                        putExtra("projectOwnerEmail", project.email)
+                        putExtra("title", project.title)
+                        putExtra("start_d", project.start_d)
+                        putExtra("end_d", project.end_d)
+                        putExtra("lan", project.lan)
+                        putExtra("type", project.type)
+                    }
+                    Log.d("MyLearningFragment", "Sending currentUserEmail: $email")
+                    Log.d("MyLearningFragment", "Sending projectOwnerEmail: ${project.email}")
+                    startActivity(intent)
+                }
+            },
+            onItemLongClicked = { project: Project ->
+                showEditProjectDialog(project)
+            }
+        )
+        recyclerView.adapter = adapter
+
 
         return view
     }
@@ -103,11 +113,9 @@ class MyLearningFragment : Fragment() {
             override fun onResponse(call: Call<List<Project>>, response: Response<List<Project>>) {
                 if (response.isSuccessful) {
                     projects.clear()
-                    Log.d("API_RESPONSE", "Raw JSON: ${response.body()}")
-                    Log.d("API_CALL", "프로젝트 데이터 불러오기 성공")
-                    response.body()?.let {
-                        projects.addAll(it)
-                        Log.d("API_CALL", "받아온 프로젝트 데이터: ${it.joinToString("\n")}")
+                    response.body()?.let { newProjects ->
+                        projects.addAll(newProjects)
+                        Log.d("API_CALL", "받아온 프로젝트 데이터: ${newProjects.joinToString("\n")}")
                     }
                     adapter.notifyDataSetChanged()
                 } else {

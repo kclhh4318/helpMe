@@ -1,6 +1,7 @@
 package com.example.helpme
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -20,10 +21,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var userEmail: String
     private lateinit var userProfileImage: String
     private lateinit var navView: BottomNavigationView
+    private lateinit var currentUserEmail: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        currentUserEmail = intent.getStringExtra("email") ?: ""
+        Log.d("MainActivity", "Received email: $currentUserEmail")
 
         navView = findViewById(R.id.nav_view)
         navView.labelVisibilityMode = LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED
@@ -45,7 +50,10 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.navigation_explore -> {
-                    navController.navigate(R.id.navigation_explore)
+                    val bundle = Bundle().apply {
+                        putString("email", userEmail)
+                    }
+                    navController.navigate(R.id.navigation_explore, bundle)
                     updateBottomNavigationIcons(R.id.navigation_explore)
                     true
                 }

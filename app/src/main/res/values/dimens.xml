@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="heart_icon_size">30dp</dimen>
+    <dimen name="heart_icon_margin">16dp</dimen>
+</resources>

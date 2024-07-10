@@ -23,7 +23,7 @@ class ExploreFragment : Fragment() {
 
     private lateinit var projects: MutableList<ProjectDetail>
     private lateinit var adapter: ProjectsAdapter2
-    private var currentUserEmail: String = "current_user_email@example.com" // 예시로 이메일을 설정합니다. 실제로는 로그인 정보를 사용하세요.
+    private var currentUserEmail: String = ""
 
     private val languages = arrayOf("Python", "Java", "Kotlin", "C++", "JavaScript")
     private val types = arrayOf("Machine Learning", "Web Development", "Mobile Development", "Blockchain", "Game Development")
@@ -36,6 +36,10 @@ class ExploreFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_explore, container, false)
 
+        // MainActivity에서 전달받은 이메일 정보 가져오기
+        currentUserEmail = arguments?.getString("email") ?: ""
+        Log.d("ExploreFragment", "Received email: $currentUserEmail")
+
         // 프로젝트 데이터 로드
         loadProjectsFromServer()
 
@@ -47,8 +51,16 @@ class ExploreFragment : Fragment() {
                 val intent = Intent(activity, ProjectDetailActivity::class.java).apply {
                     putExtra("proj_id", it.proj_id)
                     putExtra("currentUserEmail", currentUserEmail)
+                    putExtra("projectOwnerEmail", it.email)
+                    putExtra("title", it.title)
+                    putExtra("start_d", it.start_d)
+                    putExtra("end_d", it.end_d)
+                    putExtra("lan", it.lan)
+                    putExtra("type", it.type)
                 }
-                startActivityForResult(intent, REQUEST_CODE_PROJECT_DETAIL)
+                Log.d("ExploreFragment", "Sending currentUserEmail: $currentUserEmail")
+                Log.d("ExploreFragment", "Sending projectOwnerEmail: ${it.email}")
+                startActivity(intent)
             }
         }
         recyclerView.adapter = adapter
@@ -57,6 +69,11 @@ class ExploreFragment : Fragment() {
         setupFilterButtons(view)
 
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadProjectsFromServer() // 프래그먼트가 다시 활성화될 때마다 데이터 로드
     }
 
     private fun setupFilterButtons(view: View) {
@@ -141,13 +158,7 @@ class ExploreFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_PROJECT_DETAIL && resultCode == AppCompatActivity.RESULT_OK) {
-            data?.getParcelableExtra<ProjectDetail>("updatedProject")?.let { updatedProject ->
-                val index = projects.indexOfFirst { it.proj_id == updatedProject.proj_id }
-                if (index != -1) {
-                    projects[index] = updatedProject
-                    adapter.notifyItemChanged(index)
-                }
-            }
+            loadProjectsFromServer() // ProjectDetailActivity에서 돌아올 때마다 데이터 새로 고침
         }
     }
 
